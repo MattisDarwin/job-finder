@@ -12,6 +12,8 @@ bibliothèque standard, un fichier de données, une page HTML. Tout reste sur vo
 > filtre pour être réécrit, et une plateforme de recrutement qui manque s'ajoute en une
 > fonction. Voir [`AGENTS.md`](AGENTS.md), qui s'adresse justement à cet agent.
 
+![L'onglet Offres](captures/offres.jpg)
+
 ---
 
 ## Ce que ça fait
@@ -22,11 +24,17 @@ de contrat, pays et ville. Trois densités d'affichage.
 
 **Onglet Suivi.** Ce à quoi vous avez postulé, et depuis combien de jours. Vous y déclarez
 la suite — entretien, refus, sans suite — vous notez ce qui s'est dit au téléphone, et
-vous fixez la prochaine échéance. Une relance est signalée au bout de dix jours sans
-nouvelles.
+vous fixez la prochaine échéance. Quand une échéance approche, elle passe devant : elle
+remplace le compteur de jours écoulés et remonte la candidature en tête. Une relance est
+signalée au bout de dix jours sans nouvelles.
+
+![L'onglet Suivi](captures/suivi.jpg)
 
 **Onglet Entreprises.** Les 89 entreprises branchées, filtrables par tag (`cac40`, `tech`,
-`defense`, `suisse`, `sante`…). Cliquer sur une entreprise déplie ses offres.
+`defense`, `suisse`, `sante`…). Une entreprise porte plusieurs tags. Cliquer dessus déplie
+ses offres.
+
+![L'onglet Entreprises](captures/entreprises.jpg)
 
 ## Comment ça marche
 
@@ -60,6 +68,13 @@ Sous Linux ou Windows, remplacez la dernière ligne par `python3 serveur.py` pui
 
 **N'ouvrez jamais `index.html` par double-clic** : la page s'affiche, mais aucun
 changement de statut n'est enregistré, faute de serveur.
+
+## Confier la mise en route à un agent
+
+Si vous travaillez avec un agent de code local, dites-lui simplement de lire
+[`AGENTS.md`](AGENTS.md) : il y trouvera les questions à vous poser pour écrire votre
+profil, la boucle de travail, et les pièges des onze plateformes. C'est le mode d'emploi
+qui lui est destiné.
 
 ## Le profil, c'est vous
 
