@@ -1,0 +1,31 @@
+{
+  "autoMemoryDirectory": "~/Documents/vault/projects/job-finder/memory",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/Documents/vault/outils/hook-session.sh",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  },
+  "env": {
+    "GIT_AUTHOR_NAME": "claude",
+    "GIT_AUTHOR_EMAIL": "claude@vault.local"
+  },
+  "permissions": {
+    "deny": [
+      "Bash(gh repo delete*)",
+      "Bash(gh repo edit*)",
+      "Bash(git filter-repo*)",
+      "Bash(git push * --force*)",
+      "Bash(git push * -f*)",
+      "Bash(git push --force*)",
+      "Bash(git push -f*)"
+    ]
+  }
+}
