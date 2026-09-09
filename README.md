@@ -119,10 +119,12 @@ bien qu'un filtre qui garde tout.
 
 Encore faut-il savoir sur quelle plateforme elle est. C'est le travail de
 `decouvrir-ats.py` : il part de l'adresse du site carrière, suit les redirections, lit la
-page, essaie les sous-domaines d'emploi, puis frappe aux onze points d'entrée connus.
+page, essaie les sous-domaines d'emploi, puis frappe aux six points d'entrée
+qu'il sait interroger. Il reconnaît par ailleurs vingt-quatre ATS à leur signature.
 
 ```bash
-python3 decouvrir-ats.py "Nom de l'entreprise"
+python3 decouvrir-ats.py careers.exemple.com     # une entreprise que vous découvrez
+python3 decouvrir-ats.py                         # toutes celles déjà dans data.js
 ```
 
 Ce qu'il rend est **une piste, pas une conclusion** — `/rss` existe aussi chez ceux qui
@@ -145,6 +147,16 @@ demanderait de lire du HTML, ce que ce projet refuse pour l'instant.
 
 Le registre est fait pour grossir et le filtre pour être réécrit : c'est le principe. Si
 votre agent ajoute une plateforme ou vingt entreprises, la pull request est bienvenue.
+
+## Ce que ce dépôt est, et n'est pas
+
+Un projet personnel, poussé sur GitHub parce qu'il peut servir à d'autres. Il n'y a
+derrière ni équipe, ni feuille de route, ni engagement de maintenance. Je l'ai écrit pour
+ma propre recherche d'emploi et je le fais évoluer quand j'en ai besoin.
+
+Ça n'en fait pas un brouillon : il tourne tous les jours, il est testé sur de vraies
+offres, et les onze plateformes marchent. Mais prenez-le pour ce qu'il est — une base
+solide à reprendre, pas un produit avec un support.
 
 ## Licence
 

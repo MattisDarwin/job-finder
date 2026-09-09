@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Double-clic pour ouvrir la chasse.
+# Double-clic pour ouvrir job finder.
 # Le serveur s'arrete seul a la fermeture de l'onglet.
 cd "$(dirname "$0")"
 PORT=4612

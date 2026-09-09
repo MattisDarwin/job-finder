@@ -598,6 +598,14 @@ PLATEFORMES = {"greenhouse": greenhouse, "lever": lever, "smartrecruiters": smar
 
 
 def lire():
+    # Oublier la copie du fichier d'exemple est l'erreur la plus probable du premier
+    # lancement : on la répare au lieu de rendre une trace d'exécution.
+    if not DATA.exists():
+        exemple = RACINE / "data.exemple.js"
+        if not exemple.exists():
+            raise SystemExit(f"Ni {DATA.name}, ni {exemple.name}. Dépôt incomplet ?")
+        print(f"  (pas de {DATA.name} : on part de {exemple.name})")
+        DATA.write_text(exemple.read_text())
     txt = DATA.read_text()
     i = txt.index(PREFIXE) + len(PREFIXE)
     j = txt.rindex("}") + 1

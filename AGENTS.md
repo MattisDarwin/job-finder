@@ -135,7 +135,9 @@ Une ligne dans `sites-carriere.json` :
 
 Les tags sont libres et multiples ; ils servent à filtrer dans l'onglet Entreprises.
 
-Pour trouver la plateforme : `python3 decouvrir-ats.py "Nom"`. Il part de l'adresse du
+Pour trouver la plateforme : `python3 decouvrir-ats.py careers.exemple.com` — donnez
+l'adresse du site carrière, pas le nom, tant que l'entreprise n'est pas dans `data.js`.
+Il part de l'adresse du
 site carrière, suit les redirections, lit la page, essaie les sous-domaines d'emploi, puis
 frappe aux onze points d'entrée connus.
 

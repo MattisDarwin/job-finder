@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Sert la chasse et enregistre les changements de statut.
+"""Sert la page et enregistre ce qu'on y décide.
 
 Le navigateur ne peut pas écrire sur le disque : c'est ce serveur qui le fait.
 data.js reste la source de vérité unique — on le relit, on le modifie, on le réécrit.
@@ -29,6 +29,12 @@ _verrou = threading.Lock()
 
 def lire():
     """Extrait le JSON de data.js. Le fichier garde ses commentaires en tête."""
+    if not DATA.exists():                       # même filet que dans sites-carriere.py
+        exemple = RACINE / "data.exemple.js"
+        if not exemple.exists():
+            raise SystemExit(f"Ni {DATA.name}, ni {exemple.name}.")
+        print(f"Pas de {DATA.name} : on part de {exemple.name}.")
+        DATA.write_text(exemple.read_text())
     txt = DATA.read_text()
     i = txt.index(PREFIXE) + len(PREFIXE)
     j = txt.rindex("}") + 1

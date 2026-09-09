@@ -2,7 +2,7 @@
 """Récupère une fois pour toutes l'icône de chaque entreprise, et l'écrit dans logos.js.
 
 Pourquoi hors ligne. La page pourrait pointer vers un service d'icônes (Google, Clearbit,
-DuckDuckGo) en une ligne — mais alors chaque ouverture de la chasse annonce à un tiers la
+DuckDuckGo) en une ligne — mais alors chaque ouverture de la page annonce à un tiers la
 liste des entreprises regardées, et la page ne marche plus sans réseau. On récupère donc
 l'icône ici, une fois, et on la range en base64 dans un fichier servi en local.
 

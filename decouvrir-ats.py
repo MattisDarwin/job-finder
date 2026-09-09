@@ -15,9 +15,12 @@ Le résultat n'est donc jamais un homonyme : c'est ce que sert vraiment cette en
 travail long. La ligne du registre s'écrit ensuite, à la main, et se vérifie sur trois
 offres réelles.
 
-Usage : python3 decouvrir-ats.py [nom ...]
-  sans argument : toutes les entreprises de data.js qui ne sont ni branchées, ni écartées,
-  ni des agrégateurs.
+Usage : python3 decouvrir-ats.py [nom | adresse ...]
+  sans argument   : toutes les entreprises de data.js qui ne sont ni branchées, ni
+                    écartées, ni des agrégateurs.
+  une adresse     : on la sonde telle quelle — c'est le cas d'une entreprise qu'on ne
+                    connaît pas encore.  python3 decouvrir-ats.py careers.spendesk.com
+  un nom          : cherché dans data.js. S'il n'y est pas, donnez plutôt son adresse.
 """
 import concurrent.futures as cf
 import json
@@ -249,12 +252,30 @@ def cibles_par_defaut():
             if e.get("url") and _cle(e["nom"]) not in hors]
 
 
+def _ressemble_a_une_adresse(x):
+    return x.startswith(("http://", "https://")) or ("." in x and " " not in x)
+
+
 def main():
     voulus = sys.argv[1:]
-    cibles = cibles_par_defaut()
-    if voulus:
-        cherche = {_cle(v) for v in voulus}
-        cibles = [c for c in cibles if _cle(c[0]) in cherche]
+    connues = cibles_par_defaut()
+    if not voulus:
+        cibles = connues
+    else:
+        cibles, inconnus = [], []
+        par_cle = {_cle(n): (n, u) for n, u in connues}
+        for v in voulus:
+            if _ressemble_a_une_adresse(v):
+                # une adresse : on sonde ce qu'on nous donne, sans rien demander à data.js
+                hote = urllib.parse.urlsplit(v if "//" in v else "https://" + v).netloc
+                cibles.append((hote or v, v if "//" in v else "https://" + v))
+            elif _cle(v) in par_cle:
+                cibles.append(par_cle[_cle(v)])
+            else:
+                inconnus.append(v)
+        for v in inconnus:
+            print(f"« {v} » n'est pas dans data.js — donnez son adresse :\n"
+                  f"    python3 decouvrir-ats.py careers.exemple.com")
     if not cibles:
         return print("Rien à sonder.")
 
