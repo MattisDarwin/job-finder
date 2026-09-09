@@ -210,6 +210,34 @@ Les cinq derniers champs n'existent qu'une fois la candidature envoyée. Le serv
 
 ---
 
+## Les offres qui disparaissent
+
+Une annonce ne reste pas en ligne éternellement. À chaque passe, la collecte compare ce
+qu'elle a en base à ce que la plateforme vient de rendre, et marque `disparue_le` sur ce
+qui n'y est plus.
+
+Deux régimes, parce que toutes les plateformes ne rendent pas tout :
+
+- **Exhaustives** (Greenhouse, Lever, Ashby, SmartRecruiters, Recruitee, Teamtailor,
+  Radancy) : l'absence de la réponse suffit à conclure.
+- **Plafonnées** (Workday 300, Jibe 600 par pays, Phenom 600, Talentsoft 1000) : une offre
+  absente peut n'être qu'au-delà du plafond. On va donc vérifier son adresse, et on ne
+  conclut que sur un signal net — un 404, ou une redirection qui quitte la page de l'offre
+  (Greenhouse rend 200 et renvoie sur son tableau). Un 403, un 200, une panne réseau ne
+  prouvent rien et ne changent rien.
+
+Ashby ne donne aucun signal HTTP : il rend 200 sur la même adresse et n'affiche l'erreur
+qu'en JavaScript. Comme il est exhaustif, l'absence de sa réponse suffit — mais ne comptez
+jamais sur une vérification d'adresse chez lui.
+
+**Ce qui est marqué ne change pas de statut si l'utilisateur l'a déjà touché.** Une offre
+encore « à voir » passe en `mort` ; une offre jetée, retenue ou postulée garde son statut
+et reçoit seulement la date. Une candidature envoyée dont l'annonce disparaît, c'est une
+information — pas une décision à prendre à sa place.
+
+Les offres ajoutées à la main portent `"source": "manuel"` et sont exclues : elles n'ont
+pas de plateforme à qui se comparer.
+
 ## Le français partout
 
 Noms de variables, commentaires, messages, noms de fichiers. Ce n'est pas une coquetterie :

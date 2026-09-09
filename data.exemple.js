@@ -9,6 +9,11 @@
 // "postule_le" : la date du premier envoi. Gravée une fois, jamais réécrite — c'est elle
 //   qui range l'offre dans l'onglet Suivi et qui compte les jours.
 // "contrat" : "VIE" · "CDI" · "CDD" · "" quand l'intitulé n'en dit rien.
+// "disparue_le"  : le jour où l'annonce a cessé d'être en ligne. Posée par la passe
+//   de collecte : la plateforme ne la rend plus, et son adresse le confirme. Une offre
+//   encore « à voir » passe alors en "mort" ; une offre déjà triée garde son statut.
+// "source"       : "manuel" pour une offre ajoutée à la main. Elle n'a pas de
+//   plateforme à qui se comparer : la détection de disparition ne la touche jamais.
 // "notes" · "rdv" · "rdv_quoi" : le compte rendu d'un échange et la prochaine échéance.
 const DATA = {
   "offres": [

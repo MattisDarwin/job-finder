@@ -702,6 +702,15 @@
         "transport"
       ]
     },
+    "Ubisoft": {
+      "plateforme": "smartrecruiters",
+      "id": "Ubisoft2",
+      "tags": [
+        "tech",
+        "medias",
+        "jeu-video"
+      ]
+    },
     "Upflow": {
       "plateforme": "ashby",
       "id": "upflow",

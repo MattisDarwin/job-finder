@@ -114,6 +114,10 @@
            background:#8F3A1F;color:#fff;padding:3px 8px;border-radius:2px}
   .neuf{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
         background:var(--accent);color:#fff;padding:3px 8px;border-radius:2px}
+  /* L'annonce n'est plus en ligne. Sur une offre à trier c'est un statut ; sur une
+     candidature envoyée c'est une information — le poste a été pourvu ou retiré. */
+  .retiree{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+           background:var(--ko);color:#fff;padding:3px 8px;border-radius:2px}
 
   /* ---------- suivi ----------
      Une candidature n'est pas une offre : ce qu'on veut voir d'un coup d'œil, c'est
@@ -491,7 +495,8 @@ function carte(o){
       ${vignette(o.entreprise)}
       <span class="oentreprise">${esc(o.entreprise)}</span>
       ${aRelancer(o)?`<span class="relance">à relancer</span>`:""}
-      ${o.ajoute===DERNIERE&&!aRelancer(o)?`<span class="neuf">nouveau</span>`:""}
+      ${o.disparue_le?`<span class="retiree" title="Constatée le ${esc(o.disparue_le)}">annonce retirée</span>`:""}
+      ${o.ajoute===DERNIERE&&!aRelancer(o)&&!o.disparue_le?`<span class="neuf">nouveau</span>`:""}
       <span class="oposte">${esc(o.poste)}</span>
     </div>
     <div class="ometa">
@@ -747,6 +752,7 @@ function carteSuivi(o){
         <span class="tag">${esc(o.ville || o.lieu || "?")}</span>
         ${aVenir ? `<span class="prochain">${esc(o.rdv_quoi || "prochaine étape")} · ${esc(dateLisible(o.rdv))}</span>` : ""}
         ${!aVenir && aRelancer(o) ? `<span class="relance">à relancer</span>` : ""}
+        ${o.disparue_le ? `<span class="retiree" title="Constatée le ${esc(o.disparue_le)}">annonce retirée</span>` : ""}
       </div>
       <div class="cposte">${esc(o.poste)}</div>
     </div>

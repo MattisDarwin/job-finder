@@ -642,6 +642,88 @@ def adresse_carriere(plat, ident):
             "recruitee": f"https://{ident}.recruitee.com/"}.get(plat, "")
 
 
+# --- les offres qui ont disparu ----------------------------------------------
+# Une annonce ne reste pas en ligne éternellement : elle est pourvue, ou retirée. Sans
+# ça la liste se remplit de liens morts sur lesquels on clique pour rien.
+#
+# La détection se fait en DEUX TEMPS, et le second n'est pas un luxe : plusieurs
+# plateformes plafonnent ce qu'elles rendent (Workday s'arrête à 300 offres, Jibe à 600
+# par pays). Une offre absente de la réponse peut donc être simplement au-delà du
+# plafond. On ne se fie pas à cette absence : on va vérifier l'adresse.
+#
+#   1. candidate  = on l'a en base, la plateforme ne l'a pas rendue cette fois.
+#   2. confirmée  = son adresse répond 404 ou 410.
+#
+# Tout le reste — 200, 403, une panne réseau — ne prouve rien et ne change rien. Un
+# pare-feu qui refuse un client non navigateur rendrait 403 sur une offre bien vivante.
+DISPARUE = {404, 410}
+
+# Les plateformes qui ne rendent PAS tout : Workday s'arrête à 300 offres, Jibe à 600 par
+# pays, Phenom à 600, Talentsoft à 1000. Chez elles, une offre absente de la réponse peut
+# n'être qu'au-delà du plafond — il faut aller vérifier l'adresse. Chez les autres, la
+# réponse est exhaustive : l'absence suffit à conclure.
+PLAFONNEES = {"workday", "jibe", "phenom", "talentsoft"}
+
+
+def a_disparu(url):
+    """Vrai seulement si le serveur le dit clairement. Deux signaux, selon la plateforme :
+
+    — un 404 ou un 410 (Lever, SmartRecruiters, Jibe) ;
+    — une redirection qui quitte la page de l'offre (Greenhouse rend 200 et renvoie sur
+      son tableau avec « ?error=true » : l'adresse répond, l'offre n'existe plus).
+
+    Ashby, lui, rend 200 sur la même adresse et n'affiche l'erreur qu'en JavaScript : on
+    ne peut rien conclure de son côté, et on ne conclut donc rien. Dans le doute on ne
+    touche à rien — un pare-feu qui refuse un robot rend 403 sur une offre bien vivante.
+    """
+    def chemin(u):
+        return urllib.parse.urlsplit(u).path.rstrip("/")
+    try:
+        r = urllib.request.urlopen(urllib.request.Request(
+            url, headers={"User-Agent": NAVIGATEUR}), timeout=20)
+        r.read(2048)
+        return chemin(r.geturl()) != chemin(url)
+    except urllib.error.HTTPError as e:
+        return e.code in DISPARUE
+    except Exception:
+        return False
+
+
+def marque_les_disparues(obj, vues_par_entreprise, plateforme):
+    """Marque les offres que leur plateforme ne rend plus ET dont l'adresse est morte.
+
+    On ne change le statut que d'une offre encore « à voir » : ailleurs, c'est une
+    décision de l'utilisateur, et elle ne se réécrit pas. Une candidature envoyée garde
+    son statut — on note juste que l'annonce a été retirée, ce qui est en soi une info.
+    """
+    aujourdhui = datetime.date.today().isoformat()
+    absentes = [o for o in obj["offres"]
+                if o.get("source") != "manuel"
+                and not o.get("disparue_le")
+                and o["entreprise"] in vues_par_entreprise
+                and o.get("url") not in vues_par_entreprise[o["entreprise"]]]
+    if not absentes:
+        return 0, 0
+
+    # chez une plateforme exhaustive, l'absence suffit ; chez une plafonnée, on vérifie
+    sures = [o for o in absentes if plateforme.get(o["entreprise"]) not in PLAFONNEES]
+    a_verifier = [o for o in absentes if plateforme.get(o["entreprise"]) in PLAFONNEES]
+    parties = list(sures)
+    if a_verifier:
+        print(f"\n{len(a_verifier)} offres absentes chez une plateforme qui plafonne — "
+              f"on va voir leur adresse…")
+        with cf.ThreadPoolExecutor(max_workers=8) as ex:
+            parties += [o for o, morte in zip(a_verifier,
+                                              ex.map(lambda x: a_disparu(x["url"]), a_verifier))
+                        if morte]
+    for o in parties:
+        o["disparue_le"] = aujourdhui
+        if (o.get("statut") or "a-voir") == "a-voir":
+            o["statut"] = "mort"
+            o["maj"] = aujourdhui
+    return len(absentes), len(parties)
+
+
 def main():
     tout = "--tout" in sys.argv
     registre = json.loads(REGISTRE.read_text())
@@ -663,11 +745,15 @@ def main():
             return nom, plat, [], f"{type(e).__name__}"
 
     total_brut = ajoutes = 0
+    vues = {}                    # entreprise -> les URL que sa plateforme rend aujourd'hui
     with cf.ThreadPoolExecutor(max_workers=10) as ex:
         for nom, plat, postes, err in ex.map(une, reg.items()):
             if err:
+                # une entreprise injoignable n'est PAS une entreprise sans offres :
+                # on ne la compare pas, sous peine de tuer toutes ses annonces
                 print(f"  {nom:<24} échec ({err})")
                 continue
+            vues[nom] = {p[2] for p in postes if p[2]}
             total_brut += len(postes)
             gardes = 0
             for titre, lieu, url, date in postes:
@@ -715,6 +801,8 @@ def main():
             obj["entreprises"].append(connue)
         # les tags sont tenus dans le registre : la fiche les recopie, elle ne les invente pas
         connue["tags"] = fiche.get("tags", [])
+    plateforme = {nom: f["plateforme"] for nom, f in reg.items()}
+    candidates, mortes = marque_les_disparues(obj, vues, plateforme)
     obj["branchees"] = sorted(reg)
     obj["ecartees"] = sorted(registre.get("ecartes", {}))
     # Ni branchées ni à brancher : la page doit pouvoir le dire, sinon son compteur de
@@ -723,7 +811,7 @@ def main():
     obj["sans_api"] = registre.get("sans_api", {})
     DATA.write_text(entete + json.dumps(obj, ensure_ascii=False, indent=2) + queue)
     print(f"\n{total_brut} offres lues · {ajoutes} ajoutées · {reparees} dates complétées"
-          f" · {len(obj['offres'])} au total")
+          f" · {mortes} disparues sur {candidates} absentes · {len(obj['offres'])} au total")
 
 
 if __name__ == "__main__":
