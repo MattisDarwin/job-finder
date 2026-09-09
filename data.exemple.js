@@ -27,27 +27,61 @@ const DATA = {
       "contrat": "CDI",
       "url": "https://job-boards.greenhouse.io/doctolib",
       "ajoute": "2026-09-09",
-      "note": "Offre d'exemple · trouvée le 2026-09-09"
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
     },
     {
       "id": "sc-exemple02",
+      "entreprise": "Doctolib",
+      "poste": "Staff Engineer - Platform",
+      "lieu": "Paris, France",
+      "pays": "France",
+      "region": "Île-de-France",
+      "ville": "Paris",
+      "teletravail": "à vérifier",
+      "piste": "1",
+      "statut": "a-voir",
+      "priorite": 15,
+      "contrat": "",
+      "url": "https://job-boards.greenhouse.io/doctolib",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
+    },
+    {
+      "id": "sc-exemple03",
       "entreprise": "Qonto",
       "poste": "Data Engineer - Platform",
       "lieu": "Paris, France",
       "pays": "France",
       "region": "Île-de-France",
       "ville": "Paris",
-      "teletravail": "oui",
+      "teletravail": "à vérifier",
       "piste": "1",
       "statut": "a-postuler",
       "priorite": 15,
       "contrat": "",
       "url": "https://jobs.lever.co/qonto",
       "ajoute": "2026-09-09",
-      "note": "Offre d'exemple · celle-ci est marquée « à postuler »"
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
     },
     {
-      "id": "sc-exemple03",
+      "id": "sc-exemple04",
+      "entreprise": "Qonto",
+      "poste": "Backend Engineer - Payments",
+      "lieu": "Paris, France",
+      "pays": "France",
+      "region": "Île-de-France",
+      "ville": "Paris",
+      "teletravail": "à vérifier",
+      "piste": "1",
+      "statut": "a-voir",
+      "priorite": 15,
+      "contrat": "CDI",
+      "url": "https://jobs.lever.co/qonto",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
+    },
+    {
+      "id": "sc-exemple05",
       "entreprise": "Algolia",
       "poste": "Site Reliability Engineer",
       "lieu": "Remote",
@@ -61,14 +95,238 @@ const DATA = {
       "contrat": "CDI",
       "url": "https://jobs.lever.co/algolia",
       "ajoute": "2026-09-09",
-      "postule_le": "2026-09-09",
-      "maj": "2026-09-09",
-      "note": "Offre d'exemple · postulée, elle apparaît donc dans l'onglet Suivi",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre.",
+      "postule_le": "2026-08-28",
+      "maj": "2026-09-03"
+    },
+    {
+      "id": "sc-exemple06",
+      "entreprise": "Algolia",
+      "poste": "Senior Software Engineer - Search",
+      "lieu": "Paris, France",
+      "pays": "France",
+      "region": "Île-de-France",
+      "ville": "Paris",
+      "teletravail": "à vérifier",
+      "piste": "1",
+      "statut": "a-voir",
+      "priorite": 15,
+      "contrat": "",
+      "url": "https://jobs.lever.co/algolia",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
+    },
+    {
+      "id": "sc-exemple07",
+      "entreprise": "Alan",
+      "poste": "Backend Engineer (Go)",
+      "lieu": "Paris, France",
+      "pays": "France",
+      "region": "Île-de-France",
+      "ville": "Paris",
+      "teletravail": "à vérifier",
+      "piste": "1",
+      "statut": "entretien",
+      "priorite": 15,
+      "contrat": "",
+      "url": "https://jobs.ashbyhq.com/alan",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre.",
+      "postule_le": "2026-08-19",
+      "maj": "2026-08-30",
+      "rdv": "2026-09-13T14:30",
       "rdv_quoi": "Entretien technique",
-      "notes": "Exemple de notes : ce qui s'est dit, quoi préparer."
+      "notes": "Premier échange le 12 : équipe de six, stack Go et Kubernetes.\nÀ préparer : relire leur article sur la migration monolithe -> services.\nIls demandent un exercice de code en amont."
+    },
+    {
+      "id": "sc-exemple08",
+      "entreprise": "Pennylane",
+      "poste": "Développeur Backend Python",
+      "lieu": "Paris, France",
+      "pays": "France",
+      "region": "Île-de-France",
+      "ville": "Paris",
+      "teletravail": "à vérifier",
+      "piste": "1",
+      "statut": "a-voir",
+      "priorite": 15,
+      "contrat": "CDI",
+      "url": "https://jobs.lever.co/pennylane",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
+    },
+    {
+      "id": "sc-exemple09",
+      "entreprise": "Mirakl",
+      "poste": "Cloud Infrastructure Engineer",
+      "lieu": "Paris, France",
+      "pays": "France",
+      "region": "Île-de-France",
+      "ville": "Paris",
+      "teletravail": "à vérifier",
+      "piste": "1",
+      "statut": "a-voir",
+      "priorite": 15,
+      "contrat": "",
+      "url": "https://jobs.lever.co/mirakl",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
+    },
+    {
+      "id": "sc-exemple10",
+      "entreprise": "Aircall",
+      "poste": "Senior Data Engineer",
+      "lieu": "Paris, France",
+      "pays": "France",
+      "region": "Île-de-France",
+      "ville": "Paris",
+      "teletravail": "à vérifier",
+      "piste": "1",
+      "statut": "refus",
+      "priorite": 15,
+      "contrat": "",
+      "url": "https://jobs.lever.co/aircall",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre.",
+      "postule_le": "2026-08-06",
+      "maj": "2026-08-23"
+    },
+    {
+      "id": "sc-exemple11",
+      "entreprise": "Swile",
+      "poste": "DevOps Engineer",
+      "lieu": "Lyon, France",
+      "pays": "France",
+      "region": "Auvergne-Rhône-Alpes",
+      "ville": "Lyon",
+      "teletravail": "à vérifier",
+      "piste": "1",
+      "statut": "a-voir",
+      "priorite": 15,
+      "contrat": "CDI",
+      "url": "https://jobs.lever.co/swile",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
+    },
+    {
+      "id": "sc-exemple12",
+      "entreprise": "Back Market",
+      "poste": "Platform Engineer - Kubernetes",
+      "lieu": "Bordeaux, France",
+      "pays": "France",
+      "region": "Nouvelle-Aquitaine",
+      "ville": "Bordeaux",
+      "teletravail": "à vérifier",
+      "piste": "1",
+      "statut": "a-voir",
+      "priorite": 15,
+      "contrat": "",
+      "url": "https://jobs.lever.co/backmarket",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
+    },
+    {
+      "id": "sc-exemple13",
+      "entreprise": "Dataiku",
+      "poste": "Backend Engineer - API",
+      "lieu": "Paris, France",
+      "pays": "France",
+      "region": "Île-de-France",
+      "ville": "Paris",
+      "teletravail": "à vérifier",
+      "piste": "1",
+      "statut": "a-voir",
+      "priorite": 15,
+      "contrat": "",
+      "url": "https://boards.greenhouse.io/dataiku",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
+    },
+    {
+      "id": "sc-exemple14",
+      "entreprise": "Malt",
+      "poste": "Développeur Go - Marketplace",
+      "lieu": "Remote",
+      "pays": "Remote",
+      "region": "",
+      "ville": "",
+      "teletravail": "oui",
+      "piste": "1",
+      "statut": "a-voir",
+      "priorite": 15,
+      "contrat": "",
+      "url": "https://jobs.lever.co/malt",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
+    },
+    {
+      "id": "sc-exemple15",
+      "entreprise": "Sorare",
+      "poste": "Senior Backend Engineer",
+      "lieu": "Paris, France",
+      "pays": "France",
+      "region": "Île-de-France",
+      "ville": "Paris",
+      "teletravail": "à vérifier",
+      "piste": "1",
+      "statut": "a-voir",
+      "priorite": 15,
+      "contrat": "CDI",
+      "url": "https://jobs.ashbyhq.com/sorare",
+      "ajoute": "2026-09-09",
+      "note": "Offre d'exemple — remplacez ce fichier par le vôtre."
     }
   ],
   "entreprises": [
+    {
+      "nom": "Aircall",
+      "url": "https://jobs.lever.co/aircall",
+      "note": "",
+      "tags": [
+        "tech",
+        "scale-up"
+      ]
+    },
+    {
+      "nom": "Alan",
+      "url": "https://jobs.ashbyhq.com/alan",
+      "note": "",
+      "tags": [
+        "tech",
+        "scale-up",
+        "sante",
+        "assurtech"
+      ]
+    },
+    {
+      "nom": "Algolia",
+      "url": "https://jobs.lever.co/algolia",
+      "note": "",
+      "tags": [
+        "tech",
+        "scale-up"
+      ]
+    },
+    {
+      "nom": "Back Market",
+      "url": "https://jobs.lever.co/backmarket",
+      "note": "",
+      "tags": [
+        "tech",
+        "scale-up",
+        "commerce"
+      ]
+    },
+    {
+      "nom": "Dataiku",
+      "url": "https://boards.greenhouse.io/dataiku",
+      "note": "",
+      "tags": [
+        "tech",
+        "scale-up",
+        "ia"
+      ]
+    },
     {
       "nom": "Doctolib",
       "url": "https://job-boards.greenhouse.io/doctolib",
@@ -77,6 +335,35 @@ const DATA = {
         "tech",
         "scale-up",
         "sante"
+      ]
+    },
+    {
+      "nom": "Malt",
+      "url": "https://jobs.lever.co/malt",
+      "note": "",
+      "tags": [
+        "tech",
+        "scale-up"
+      ]
+    },
+    {
+      "nom": "Mirakl",
+      "url": "https://jobs.lever.co/mirakl",
+      "note": "",
+      "tags": [
+        "tech",
+        "scale-up",
+        "commerce"
+      ]
+    },
+    {
+      "nom": "Pennylane",
+      "url": "https://jobs.lever.co/pennylane",
+      "note": "",
+      "tags": [
+        "tech",
+        "scale-up",
+        "fintech"
       ]
     },
     {
@@ -90,19 +377,39 @@ const DATA = {
       ]
     },
     {
-      "nom": "Algolia",
-      "url": "https://jobs.lever.co/algolia",
+      "nom": "Sorare",
+      "url": "https://jobs.ashbyhq.com/sorare",
       "note": "",
       "tags": [
         "tech",
-        "scale-up"
+        "scale-up",
+        "fintech"
+      ]
+    },
+    {
+      "nom": "Swile",
+      "url": "https://jobs.lever.co/swile",
+      "note": "",
+      "tags": [
+        "tech",
+        "scale-up",
+        "rh"
       ]
     }
   ],
   "branchees": [
+    "Aircall",
+    "Alan",
     "Algolia",
+    "Back Market",
+    "Dataiku",
     "Doctolib",
-    "Qonto"
+    "Malt",
+    "Mirakl",
+    "Pennylane",
+    "Qonto",
+    "Sorare",
+    "Swile"
   ],
   "ecartees": [],
   "agregateurs": {},
