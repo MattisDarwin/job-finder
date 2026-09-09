@@ -134,7 +134,7 @@ const DATA = {
       "note": "Offre d'exemple — remplacez ce fichier par le vôtre.",
       "postule_le": "2026-08-19",
       "maj": "2026-08-30",
-      "rdv": "2026-09-13T14:30",
+      "rdv": "2026-09-15T14:30",
       "rdv_quoi": "Entretien technique",
       "notes": "Premier échange le 12 : équipe de six, stack Go et Kubernetes.\nÀ préparer : relire leur article sur la migration monolithe -> services.\nIls demandent un exercice de code en amont."
     },
