@@ -141,8 +141,7 @@ publient un blog. Relisez trois offres réelles avant d'inscrire la ligne.
 
 ## Ce qui n'est pas fait
 
-Volontairement. Repérer les offres dont le lien est mort. Une vue des annonces de plus de
-trente jours. Brancher les entreprises sans API publique — il en reste beaucoup, et ça
+Volontairement. Une vue des annonces de plus de trente jours. Brancher les entreprises sans API publique — il en reste beaucoup, et ça
 demanderait de lire du HTML, ce que ce projet refuse pour l'instant.
 
 Le registre est fait pour grossir et le filtre pour être réécrit : c'est le principe. Si
