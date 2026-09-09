@@ -68,9 +68,10 @@ dix jours de silence.
 
 ![L'onglet Suivi](captures/suivi.jpg)
 
-**Entreprises.** Les 89 entreprises livrées avec le dépôt, filtrables par tag — `cac40`,
-`tech`, `defense`, `suisse`, `sante`, `fintech`… Une entreprise en porte plusieurs.
-Cliquer dessus déplie ses offres.
+**Entreprises.** Les 89 entreprises livrées avec le dépôt, filtrables par 33 tags —
+`cac40` (19), `tech` (51), `suisse` (16), `defense` (4), `sante` (12), `fintech` (8)…
+Une entreprise en porte plusieurs. Cliquer dessus déplie ses offres, et chaque carte dit
+son état : branchée avec des offres, branchée sans rien pour vous, ou écartée.
 
 ![L'onglet Entreprises](captures/entreprises.jpg)
 
