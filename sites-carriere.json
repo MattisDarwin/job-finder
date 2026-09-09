@@ -1,0 +1,783 @@
+{
+  "_note": "Le registre : quelle entreprise, sur quelle plateforme, sous quel identifiant, avec quels tags. Une entreprise = un objet {plateforme, id, tags}. Les tags sont libres et multiples ; ils servent à filtrer dans la page. Plateformes disponibles : greenhouse, lever, smartrecruiters, ashby, recruitee, workday, phenom, talentsoft, teamtailor, radancy, jibe. Pour trouver celle d'une entreprise : decouvrir-ats.py.",
+  "entreprises": {
+    "360Learning": {
+      "plateforme": "lever",
+      "id": "360learning",
+      "tags": [
+        "tech",
+        "scale-up",
+        "edtech",
+        "remote"
+      ]
+    },
+    "ABB (CH)": {
+      "plateforme": "workday",
+      "id": "abb/wd3/External_Career_Page",
+      "tags": [
+        "industrie",
+        "energie",
+        "suisse"
+      ]
+    },
+    "Accor": {
+      "plateforme": "smartrecruiters",
+      "id": "accor",
+      "tags": [
+        "cac40",
+        "hotellerie"
+      ]
+    },
+    "AG2R La Mondiale": {
+      "plateforme": "workday",
+      "id": "ag2rlamondiale/wd3/Candidats",
+      "tags": [
+        "banque-assurance"
+      ]
+    },
+    "Agicap": {
+      "plateforme": "lever",
+      "id": "agicap",
+      "tags": [
+        "tech",
+        "scale-up",
+        "fintech"
+      ]
+    },
+    "Airbus": {
+      "plateforme": "workday",
+      "id": "ag/wd3/airbus",
+      "tags": [
+        "cac40",
+        "defense",
+        "aeronautique",
+        "industrie"
+      ]
+    },
+    "Aircall": {
+      "plateforme": "lever",
+      "id": "aircall",
+      "tags": [
+        "tech",
+        "scale-up"
+      ]
+    },
+    "Alan": {
+      "plateforme": "ashby",
+      "id": "alan",
+      "tags": [
+        "tech",
+        "scale-up",
+        "sante",
+        "assurtech"
+      ]
+    },
+    "Algolia": {
+      "plateforme": "greenhouse",
+      "id": "algolia",
+      "tags": [
+        "tech",
+        "scale-up"
+      ]
+    },
+    "Ankorstore": {
+      "plateforme": "ashby",
+      "id": "ankorstore",
+      "tags": [
+        "tech",
+        "scale-up",
+        "commerce"
+      ]
+    },
+    "Arabelle Solutions": {
+      "plateforme": "workday",
+      "id": "arabellesolutions/wd3/Arabelle_Solutions",
+      "tags": [
+        "industrie",
+        "energie"
+      ]
+    },
+    "ArianeGroup": {
+      "plateforme": "workday",
+      "id": "arianegroup/wd3/EXTERNALALL",
+      "tags": [
+        "defense",
+        "aeronautique",
+        "industrie"
+      ]
+    },
+    "AXA": {
+      "plateforme": "jibe",
+      "id": "jobs.axa.com",
+      "tags": [
+        "cac40",
+        "banque-assurance"
+      ]
+    },
+    "Back Market": {
+      "plateforme": "ashby",
+      "id": "backmarket",
+      "tags": [
+        "tech",
+        "scale-up",
+        "commerce"
+      ]
+    },
+    "Banque de France": {
+      "plateforme": "workday",
+      "id": "bdf/wd103/recrutement-banque-de-France",
+      "tags": [
+        "public",
+        "banque-assurance"
+      ]
+    },
+    "Believe": {
+      "plateforme": "smartrecruiters",
+      "id": "believe",
+      "tags": [
+        "tech",
+        "medias"
+      ]
+    },
+    "BlaBlaCar": {
+      "plateforme": "lever",
+      "id": "blablacar",
+      "tags": [
+        "tech",
+        "scale-up",
+        "transport"
+      ]
+    },
+    "Cardiologs": {
+      "plateforme": "lever",
+      "id": "cardiologs",
+      "tags": [
+        "tech",
+        "sante"
+      ]
+    },
+    "Chanel": {
+      "plateforme": "workday",
+      "id": "cc/wd3/ChanelCareers",
+      "tags": [
+        "luxe"
+      ]
+    },
+    "Choose": {
+      "plateforme": "lever",
+      "id": "choose",
+      "tags": [
+        "tech",
+        "scale-up",
+        "commerce"
+      ]
+    },
+    "Contentsquare": {
+      "plateforme": "lever",
+      "id": "contentsquare",
+      "tags": [
+        "tech",
+        "scale-up"
+      ]
+    },
+    "Crédit Agricole": {
+      "plateforme": "talentsoft",
+      "id": "casa-recrute.talent-soft.com",
+      "tags": [
+        "cac40",
+        "banque-assurance"
+      ]
+    },
+    "Dailymotion": {
+      "plateforme": "smartrecruiters",
+      "id": "dailymotion",
+      "tags": [
+        "tech",
+        "medias"
+      ]
+    },
+    "Dataiku": {
+      "plateforme": "greenhouse",
+      "id": "dataiku",
+      "tags": [
+        "tech",
+        "scale-up",
+        "ia"
+      ]
+    },
+    "Doctolib": {
+      "plateforme": "greenhouse",
+      "id": "doctolib",
+      "tags": [
+        "tech",
+        "scale-up",
+        "sante"
+      ]
+    },
+    "Dust": {
+      "plateforme": "ashby",
+      "id": "dust",
+      "tags": [
+        "tech",
+        "startup",
+        "ia"
+      ]
+    },
+    "EDF": {
+      "plateforme": "talentsoft",
+      "id": "edf-recrute.talent-soft.com",
+      "tags": [
+        "public",
+        "energie",
+        "industrie"
+      ]
+    },
+    "Eiffage": {
+      "plateforme": "workday",
+      "id": "eiffage/wd3/Eiffage_Careers",
+      "tags": [
+        "cac40",
+        "construction"
+      ]
+    },
+    "Flink": {
+      "plateforme": "ashby",
+      "id": "flink",
+      "tags": [
+        "tech",
+        "scale-up",
+        "commerce"
+      ]
+    },
+    "Frontify (CH)": {
+      "plateforme": "ashby",
+      "id": "frontify",
+      "tags": [
+        "tech",
+        "scale-up",
+        "suisse"
+      ]
+    },
+    "GetYourGuide": {
+      "plateforme": "greenhouse",
+      "id": "getyourguide",
+      "tags": [
+        "tech",
+        "scale-up",
+        "tourisme"
+      ]
+    },
+    "Implicity": {
+      "plateforme": "smartrecruiters",
+      "id": "implicity",
+      "tags": [
+        "tech",
+        "sante"
+      ]
+    },
+    "Ivalua": {
+      "plateforme": "greenhouse",
+      "id": "ivalua",
+      "tags": [
+        "tech",
+        "scale-up"
+      ]
+    },
+    "Julius Baer (CH)": {
+      "plateforme": "workday",
+      "id": "juliusbaer/wd3/External",
+      "tags": [
+        "banque-assurance",
+        "suisse"
+      ]
+    },
+    "Kühne+Nagel": {
+      "plateforme": "phenom",
+      "id": "jobs.kuehne-nagel.com",
+      "tags": [
+        "transport",
+        "logistique",
+        "suisse"
+      ]
+    },
+    "Ledger": {
+      "plateforme": "ashby",
+      "id": "ledger",
+      "tags": [
+        "tech",
+        "scale-up",
+        "fintech"
+      ]
+    },
+    "Lifen": {
+      "plateforme": "ashby",
+      "id": "lifen",
+      "tags": [
+        "tech",
+        "sante"
+      ]
+    },
+    "Logitech (CH)": {
+      "plateforme": "workday",
+      "id": "logitech/wd5/Logitech",
+      "tags": [
+        "tech",
+        "industrie",
+        "suisse"
+      ]
+    },
+    "Lonza (CH)": {
+      "plateforme": "workday",
+      "id": "lonza/wd3/Lonza_Careers",
+      "tags": [
+        "sante",
+        "pharma",
+        "industrie",
+        "suisse"
+      ]
+    },
+    "Malt": {
+      "plateforme": "lever",
+      "id": "malt",
+      "tags": [
+        "tech",
+        "scale-up"
+      ]
+    },
+    "Michelin": {
+      "plateforme": "workday",
+      "id": "michelinhr/wd3/michelin",
+      "tags": [
+        "cac40",
+        "industrie"
+      ]
+    },
+    "Mirakl": {
+      "plateforme": "greenhouse",
+      "id": "mirakl",
+      "tags": [
+        "tech",
+        "scale-up",
+        "commerce"
+      ]
+    },
+    "Nabla": {
+      "plateforme": "ashby",
+      "id": "nabla",
+      "tags": [
+        "tech",
+        "startup",
+        "sante",
+        "ia"
+      ]
+    },
+    "Nexthink (CH)": {
+      "plateforme": "smartrecruiters",
+      "id": "nexthink",
+      "tags": [
+        "tech",
+        "scale-up",
+        "suisse"
+      ]
+    },
+    "Novartis (CH)": {
+      "plateforme": "workday",
+      "id": "novartis/wd3/Novartis_Careers",
+      "tags": [
+        "pharma",
+        "sante",
+        "suisse"
+      ]
+    },
+    "Orange": {
+      "plateforme": "workday",
+      "id": "orange/wd3/Orange_Career",
+      "tags": [
+        "cac40",
+        "telecom"
+      ]
+    },
+    "Otis": {
+      "plateforme": "workday",
+      "id": "otis/wd504/REC_Ext_Gateway",
+      "tags": [
+        "industrie"
+      ]
+    },
+    "Owkin": {
+      "plateforme": "ashby",
+      "id": "owkin",
+      "tags": [
+        "tech",
+        "scale-up",
+        "sante",
+        "ia"
+      ]
+    },
+    "Payfit": {
+      "plateforme": "teamtailor",
+      "id": "careers.payfit.com",
+      "tags": [
+        "tech",
+        "scale-up",
+        "rh"
+      ]
+    },
+    "Pennylane": {
+      "plateforme": "ashby",
+      "id": "pennylane",
+      "tags": [
+        "tech",
+        "scale-up",
+        "fintech"
+      ]
+    },
+    "Pernod Ricard": {
+      "plateforme": "workday",
+      "id": "pernodricard/wd3/pernod-ricard",
+      "tags": [
+        "cac40",
+        "agroalimentaire"
+      ]
+    },
+    "Personio": {
+      "plateforme": "recruitee",
+      "id": "personio",
+      "tags": [
+        "tech",
+        "scale-up",
+        "rh"
+      ]
+    },
+    "PhotoRoom": {
+      "plateforme": "ashby",
+      "id": "photoroom",
+      "tags": [
+        "tech",
+        "startup",
+        "ia"
+      ]
+    },
+    "Pigment": {
+      "plateforme": "lever",
+      "id": "pigment",
+      "tags": [
+        "tech",
+        "scale-up"
+      ]
+    },
+    "Poolside": {
+      "plateforme": "ashby",
+      "id": "poolside",
+      "tags": [
+        "tech",
+        "startup",
+        "ia"
+      ]
+    },
+    "Proton": {
+      "plateforme": "greenhouse",
+      "id": "proton",
+      "tags": [
+        "tech",
+        "scale-up",
+        "suisse"
+      ]
+    },
+    "Publicis": {
+      "plateforme": "jibe",
+      "id": "careers.publicisgroupe.com",
+      "tags": [
+        "cac40",
+        "medias",
+        "publicite"
+      ]
+    },
+    "Qare": {
+      "plateforme": "recruitee",
+      "id": "qare",
+      "tags": [
+        "tech",
+        "sante"
+      ]
+    },
+    "Qonto": {
+      "plateforme": "lever",
+      "id": "qonto",
+      "tags": [
+        "tech",
+        "scale-up",
+        "fintech"
+      ]
+    },
+    "RATP": {
+      "plateforme": "workday",
+      "id": "ratp/wd3/RATP_Externe",
+      "tags": [
+        "public",
+        "transport"
+      ]
+    },
+    "Renault": {
+      "plateforme": "workday",
+      "id": "alliancewd/wd3/renault-group-careers",
+      "tags": [
+        "cac40",
+        "automobile",
+        "industrie"
+      ]
+    },
+    "Richemont (CH)": {
+      "plateforme": "workday",
+      "id": "richemont/wd3/richemont",
+      "tags": [
+        "luxe",
+        "suisse"
+      ]
+    },
+    "Roche (CH)": {
+      "plateforme": "workday",
+      "id": "roche/wd3/roche-ext",
+      "tags": [
+        "pharma",
+        "sante",
+        "suisse"
+      ]
+    },
+    "Safran": {
+      "plateforme": "talentsoft",
+      "id": "careers.safran-group.com",
+      "tags": [
+        "cac40",
+        "defense",
+        "aeronautique",
+        "industrie"
+      ]
+    },
+    "Saint-Gobain": {
+      "plateforme": "smartrecruiters",
+      "id": "saintgobain",
+      "tags": [
+        "cac40",
+        "industrie",
+        "construction"
+      ]
+    },
+    "Salesforce": {
+      "plateforme": "workday",
+      "id": "salesforce/wd12/External_Career_Site",
+      "tags": [
+        "tech",
+        "grand-groupe"
+      ]
+    },
+    "Sanofi": {
+      "plateforme": "workday",
+      "id": "sanofi/wd3/SanofiCareers",
+      "tags": [
+        "cac40",
+        "pharma",
+        "sante"
+      ]
+    },
+    "Scandit (CH)": {
+      "plateforme": "greenhouse",
+      "id": "scandit",
+      "tags": [
+        "tech",
+        "scale-up",
+        "suisse"
+      ]
+    },
+    "Schneider Electric": {
+      "plateforme": "jibe",
+      "id": "careers.se.com",
+      "tags": [
+        "cac40",
+        "industrie",
+        "energie"
+      ]
+    },
+    "Silvr": {
+      "plateforme": "greenhouse",
+      "id": "silvr",
+      "tags": [
+        "tech",
+        "startup",
+        "fintech"
+      ]
+    },
+    "Smallpdf (CH)": {
+      "plateforme": "ashby",
+      "id": "smallpdf",
+      "tags": [
+        "tech",
+        "scale-up",
+        "suisse"
+      ]
+    },
+    "Sodexo": {
+      "plateforme": "smartrecruiters",
+      "id": "sodexo",
+      "tags": [
+        "cac40",
+        "services"
+      ]
+    },
+    "SonarSource (CH)": {
+      "plateforme": "lever",
+      "id": "sonarsource",
+      "tags": [
+        "tech",
+        "scale-up",
+        "suisse"
+      ]
+    },
+    "Sorare": {
+      "plateforme": "ashby",
+      "id": "sorare",
+      "tags": [
+        "tech",
+        "scale-up",
+        "fintech"
+      ]
+    },
+    "Stellantis": {
+      "plateforme": "workday",
+      "id": "stellantis/wd3/External_Career_Site_ID01",
+      "tags": [
+        "automobile",
+        "industrie"
+      ]
+    },
+    "Sunday": {
+      "plateforme": "ashby",
+      "id": "sunday",
+      "tags": [
+        "tech",
+        "startup"
+      ]
+    },
+    "Swile": {
+      "plateforme": "lever",
+      "id": "swile",
+      "tags": [
+        "tech",
+        "scale-up",
+        "rh"
+      ]
+    },
+    "Swiss Life (CH)": {
+      "plateforme": "workday",
+      "id": "swisslife/wd3/Swiss_Life_International_Division_Career_Site",
+      "tags": [
+        "banque-assurance",
+        "suisse"
+      ]
+    },
+    "Swisscom (CH)": {
+      "plateforme": "recruitee",
+      "id": "swisscom",
+      "tags": [
+        "telecom",
+        "suisse"
+      ]
+    },
+    "Thales": {
+      "plateforme": "workday",
+      "id": "thales/wd3/Careers",
+      "tags": [
+        "cac40",
+        "defense",
+        "aeronautique",
+        "industrie"
+      ]
+    },
+    "Trainline": {
+      "plateforme": "ashby",
+      "id": "trainline",
+      "tags": [
+        "tech",
+        "scale-up",
+        "transport"
+      ]
+    },
+    "Upflow": {
+      "plateforme": "ashby",
+      "id": "upflow",
+      "tags": [
+        "tech",
+        "startup",
+        "fintech"
+      ]
+    },
+    "Valeo": {
+      "plateforme": "workday",
+      "id": "valeo/wd3/Valeo_Jobs",
+      "tags": [
+        "cac40",
+        "automobile",
+        "industrie"
+      ]
+    },
+    "Veepee": {
+      "plateforme": "lever",
+      "id": "veepee",
+      "tags": [
+        "tech",
+        "commerce"
+      ]
+    },
+    "Veolia": {
+      "plateforme": "radancy",
+      "id": "jobs.veolia.com",
+      "tags": [
+        "cac40",
+        "energie",
+        "services"
+      ]
+    },
+    "Verkor": {
+      "plateforme": "lever",
+      "id": "verkor",
+      "tags": [
+        "industrie",
+        "energie",
+        "startup"
+      ]
+    },
+    "Vestiaire Collective": {
+      "plateforme": "lever",
+      "id": "vestiairecollective",
+      "tags": [
+        "tech",
+        "scale-up",
+        "commerce",
+        "luxe"
+      ]
+    },
+    "Vinci": {
+      "plateforme": "radancy",
+      "id": "jobs.vinci.com",
+      "tags": [
+        "cac40",
+        "construction"
+      ]
+    },
+    "Younited": {
+      "plateforme": "lever",
+      "id": "younited",
+      "tags": [
+        "tech",
+        "scale-up",
+        "fintech"
+      ]
+    }
+  },
+  "ecartes": {},
+  "_note_ecartes": "ESN, cabinets de conseil et outsourcing. Écartés volontairement : régie et plateau client, l'inverse d'un poste qui laisse du temps. Conservés ici pour que la découverte ne les réinscrive pas. Le couple [plateforme, identifiant] vaut [\"?\", \"\"] quand l'ATS n'a jamais été identifié : ces entreprises ne sont pas interrogées, seul leur nom compte ici.",
+  "agregateurs": {},
+  "_note_agregateurs": "Ni employeurs ni sites carrière : les compter comme « non branchées » ferait croire à du travail restant qui n'existe pas.",
+  "sans_api": {},
+  "_note_sans_api": "Site carrière sans API publique exploitable. Vérifié une fois, noté ici avec la date : on n'y revient pas tous les mois."
+}

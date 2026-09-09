@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chasse à l'emploi</title>
+<style>
+  :root{
+    --paper:#E4EFF6; --card:#F6FBFD; --ink:#14232C; --muted:#63808F;
+    --line:#C3DAE6; --accent:#1F6B8F; --chip:#D6E7F0;
+    --ok:#1E6E4B; --ko:#8A3B2A; --wait:#8A6A1E;
+    --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+       -webkit-font-smoothing:antialiased}
+  .wrap{max-width:1500px;margin:0 auto;padding:26px 26px 80px}
+
+  header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+         border-bottom:2px solid var(--ink);padding-bottom:13px;margin-bottom:18px}
+  h1{font-family:var(--serif);font-size:26px;margin:0;font-weight:600}
+  .count{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em}
+  .search{margin-left:auto;font-family:var(--mono);font-size:12px;padding:8px 12px;
+          border:1px solid var(--line);background:var(--card);color:var(--ink);
+          border-radius:2px;min-width:250px}
+  .search:focus{outline:none;border-color:var(--ink)}
+
+  .onglets{display:flex;gap:8px;margin-bottom:20px}
+  .onglet{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+          padding:10px 18px;border:1px solid var(--line);background:transparent;color:var(--ink);
+          cursor:pointer;border-radius:2px}
+  .onglet.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .onglet i{font-style:normal;opacity:.5;margin-left:7px}
+
+  .flabel{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--muted);
+          text-transform:uppercase;margin-bottom:7px}
+  .frow{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+  .fbtn{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+        padding:7px 12px;border:1px solid var(--line);background:transparent;color:var(--ink);
+        cursor:pointer;border-radius:2px}
+  .fbtn:hover{border-color:var(--ink)}
+  .fbtn.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .fbtn i{font-style:normal;opacity:.5;margin-left:6px}
+
+  /* ---------- offres ---------- */
+  .onglets{position:relative}
+  /* `hidden` ne suffit pas quand la regle porte un `display` explicite : le navigateur
+     applique [hidden]{display:none} avec une specificite plus faible. La barre restait
+     donc visible sur les onglets Suivi et Entreprises, ou elle ne veut rien dire. */
+  .modes{position:absolute;right:0;top:2px;display:flex;gap:5px}
+  .modes[hidden]{display:none}
+  .modes button{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;
+                text-transform:uppercase;padding:7px 12px;border:1px solid var(--line);
+                background:none;color:var(--muted);cursor:pointer;border-radius:2px}
+  .modes button:hover{color:var(--ink);border-color:var(--ink)}
+  .modes button.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+
+  .offres{display:grid;gap:14px}
+  /* grille : les mêmes cartes, sur plusieurs colonnes */
+  .offres.grille{grid-template-columns:repeat(auto-fill,minmax(360px,1fr));align-items:start}
+  .offres.grille .oposte{font-size:18px}
+  .offres.grille .onote{font-size:13px}
+  /* compact : une ligne par offre, les actions n'apparaissent qu'au survol */
+  .offres.compact{gap:2px}
+  .offres.compact .offre{padding:9px 14px;display:flex;align-items:baseline;
+                         gap:10px;flex-wrap:wrap}
+  .offres.compact .oposte{font-size:15px;flex:1 1 auto}
+  .offres.compact .onote{display:none}
+  .offres.compact .ometa .tag:nth-child(n+2){display:none}
+  .offres.compact .oactions{display:none;flex:1 1 100%;border-top:none;padding-top:8px}
+  .offres.compact .offre:hover .oactions,
+  .offres.compact .offre:focus-within .oactions{display:flex}
+  .offre{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);
+         padding:16px 18px;display:grid;gap:10px;transition:.14s}
+  .offre:hover{border-color:var(--ink);border-left-color:var(--accent)}
+  .offre[data-s="a-postuler"]{border-left-color:#8F3A1F}
+  .offre[data-s="postule"]{border-left-color:var(--ok)}
+  .offre[data-s="entretien"]{border-left-color:var(--accent);background:#EAF4FA}
+  .offre[data-s="jete"],.offre[data-s="mort"]{opacity:.45}
+  .otop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .oentreprise{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+               color:var(--accent);font-weight:600}
+  .oposte{font-family:var(--serif);font-size:20px;line-height:1.2;flex:1 1 100%}
+  .ometa{display:flex;gap:7px;flex-wrap:wrap}
+  .tag{font-family:var(--mono);font-size:10.5px;padding:4px 9px;background:var(--chip);
+       border:1px solid var(--line);border-radius:2px;color:#33505E}
+  .onote{font-size:14px;line-height:1.55;color:#31454F;max-width:82ch}
+  .onote b{color:var(--ink)}
+  .oactions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+            border-top:1px solid var(--line);padding-top:11px}
+  .abtn{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+        padding:8px 13px;border:1px solid var(--line);background:transparent;color:var(--ink);
+        cursor:pointer;border-radius:2px}
+  .abtn:hover{border-color:var(--ink)}
+  .abtn.on{color:#fff;border-color:transparent}
+  /* le geste qui fait avancer la chasse se voit sans être criard */
+  .abtn.fort{border-color:var(--ok);color:var(--ok);font-weight:600}
+  .abtn.fort:hover{background:var(--ok);color:#fff}
+  .abtn.fort.on{background:var(--ok);color:#fff;border-color:var(--ok)}
+  .abtn[data-v="postule"].on{background:var(--ok)}
+  .abtn[data-v="entretien"].on{background:var(--accent)}
+  .abtn[data-v="jete"].on,.abtn[data-v="mort"].on{background:var(--ko)}
+  .abtn[data-v="a-voir"].on{background:var(--wait)}
+  .abtn[data-v="a-postuler"].on{background:#8F3A1F}
+  .abtn.copier{margin-left:auto}
+  .lien{font-family:var(--mono);font-size:11px;letter-spacing:.06em;
+        text-transform:uppercase;padding:8px 15px;background:var(--ink);color:var(--paper);
+        text-decoration:none;border-radius:2px}
+  .lien:hover{background:var(--accent)}
+  .maj{font-family:var(--mono);font-size:10px;color:var(--muted)}
+  .relance{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+           background:#8F3A1F;color:#fff;padding:3px 8px;border-radius:2px}
+  .neuf{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+        background:var(--accent);color:#fff;padding:3px 8px;border-radius:2px}
+
+  /* ---------- suivi ----------
+     Une candidature n'est pas une offre : ce qu'on veut voir d'un coup d'œil, c'est
+     depuis combien de temps elle attend. Le nombre de jours est donc le seul chiffre
+     en gros caractères de la page. */
+  .bilan{display:flex;gap:22px;flex-wrap:wrap;align-items:baseline;
+         border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:18px}
+  .bilan b{font-family:var(--serif);font-size:27px;font-weight:600;margin-right:6px}
+  .bilan span{font-family:var(--mono);font-size:11px;letter-spacing:.08em;
+              text-transform:uppercase;color:var(--muted)}
+  .suivi{display:grid;gap:11px}
+  .cand{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--line);
+        padding:14px 17px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+        transition:border-color .14s,box-shadow .14s}
+  /* Sans cette largeur minimale, le titre du poste se laisse écraser sur deux lignes
+     par la rangée de boutons, qui n'a pourtant pas besoin de toute cette place. */
+  .cinfo{min-width:280px}
+  .cand:hover{border-color:var(--ink);box-shadow:0 3px 14px rgba(20,35,44,.07)}
+  .cand[data-s="entretien"]{border-left-color:var(--accent);background:#EAF4FA}
+  .cand[data-s="refus"],.cand[data-s="mort"]{border-left-color:var(--ko);opacity:.62}
+  .cand[data-s="postule"]{border-left-color:var(--ok)}
+  .cand.tarde{border-left-color:#8F3A1F}
+  .cjours{flex:0 0 58px;text-align:center}
+  .cjours b{display:block;font-family:var(--serif);font-size:25px;line-height:1}
+  .cjours span{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;
+               text-transform:uppercase;color:var(--muted)}
+  .cand.tarde .cjours b{color:#8F3A1F}
+  .ctitre{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+  .ctitre .enom{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;
+                text-transform:uppercase;color:var(--accent);font-weight:600}
+  .cinfo{flex:1 1 auto;min-width:0;display:grid;gap:4px}
+  .cposte{font-family:var(--serif);font-size:17px;line-height:1.25}
+  .cetat{flex:0 0 auto;display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end;
+         max-width:340px}
+  .cand .abtn{font-size:10px;padding:6px 10px}
+  /* Le rendez-vous prend la place du compteur de jours : quand une date approche,
+     c'est elle qui compte, pas le temps écoulé depuis l'envoi. */
+  .cand.rdv{border-left-color:var(--accent)}
+  .cjours.vers b{color:var(--accent)}
+  .cnotes{flex:1 1 100%;border-top:1px solid var(--line);padding-top:11px;margin-top:2px;
+          display:grid;gap:7px}
+  .cnotes textarea{width:100%;min-height:112px;font-family:var(--sans);font-size:13.5px;
+        line-height:1.55;color:var(--ink);background:var(--paper);border:1px solid var(--line);
+        border-radius:2px;padding:10px 12px;resize:vertical}
+  .cnotes textarea:focus{outline:none;border-color:var(--ink)}
+  .cnotes .ligne{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .cnotes input[type=datetime-local],.cnotes input[type=text]{font-family:var(--mono);
+        font-size:11.5px;padding:7px 10px;border:1px solid var(--line);background:var(--card);
+        color:var(--ink);border-radius:2px}
+  .cnotes input[type=text]{flex:1 1 200px;font-family:var(--sans);font-size:13px}
+  .cnotes .aide{font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+                text-transform:uppercase;color:var(--muted)}
+  .prochain{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+            background:var(--accent);color:#fff;padding:3px 8px;border-radius:2px}
+  @media (max-width:900px){
+    .cand{flex-wrap:wrap}
+    .cetat{flex:1 1 100%;justify-content:flex-start;max-width:none;
+           border-top:1px solid var(--line);padding-top:10px}
+  }
+
+  /* ---------- logos ----------
+     Une icône récupérée par logos.py quand elle existe, sinon un monogramme dont la
+     teinte dérive du nom : deux entreprises voisines ne se ressemblent pas, et la même
+     entreprise garde sa couleur d'une session à l'autre. */
+  .logo{width:26px;height:26px;flex:0 0 auto;border:1px solid var(--line);border-radius:4px;
+        background:#fff;object-fit:contain;padding:2px}
+  .logo.mono{display:grid;place-items:center;padding:0;font-family:var(--mono);
+             font-size:11px;font-weight:600;
+             background:hsl(var(--h) 32% 88%);color:hsl(var(--h) 42% 30%);
+             border-color:hsl(var(--h) 28% 77%)}
+  .offres.compact .logo{width:19px;height:19px;font-size:9px;border-radius:3px}
+  .ent .logo{width:34px;height:34px;font-size:13px}
+  .etete{display:flex;align-items:center;gap:10px}
+
+  /* ---------- entreprises ---------- */
+  .cats{display:grid;gap:26px}
+  .cat h2{font-family:var(--serif);font-size:20px;margin:0 0 12px;
+          border-bottom:1px solid var(--line);padding-bottom:7px}
+  .grid{display:grid;gap:11px;grid-template-columns:repeat(auto-fill,minmax(330px,1fr))}
+  .ent{background:var(--card);border:1px solid var(--line);padding:13px 15px;display:grid;gap:7px}
+  .ent:hover{border-color:var(--ink)}
+  .enom{font-family:var(--serif);font-size:17px}
+  .enote{font-size:13px;line-height:1.5;color:#31454F}
+  .etags{display:flex;gap:5px;flex-wrap:wrap}
+  .etags .tag{font-size:9.5px;padding:3px 7px;letter-spacing:.04em}
+  .eliens{display:flex;gap:7px;flex-wrap:wrap;margin-top:2px}
+  .eliens a{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;
+            padding:6px 11px;border:1px solid var(--line);color:var(--ink);text-decoration:none;
+            border-radius:2px}
+  .eliens a:hover{border-color:var(--ink);background:var(--chip)}
+  .etat{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;
+        padding:6px 11px;border:1px solid var(--line);border-radius:2px;background:none;
+        color:var(--muted);cursor:default}
+  .etat.a{color:var(--paper);background:var(--accent);border-color:var(--accent);cursor:pointer}
+  .etat.a:hover{filter:brightness(1.12)}
+  .cachees{font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+           padding:6px 10px;border:1px dashed var(--line);border-radius:2px;background:none;
+           color:var(--muted);cursor:pointer}
+  .cachees:hover{border-style:solid;color:var(--ink)}
+  .offre[data-s="jete"],.offre[data-s="mort"]{opacity:.55}
+  .ent.ouverte{grid-column:1/-1;border-color:var(--ink)}
+  .dedans{display:grid;gap:11px;margin-top:6px;padding-top:13px;border-top:1px solid var(--line)}
+
+  /* ---------- mouvement ----------
+     Trois règles. Rien ne bouge plus de 220 ms — au-delà on attend la page au lieu de
+     la lire. Rien n'anime autre chose qu'`opacity` et `transform`, les deux seules
+     propriétés que le navigateur sait déplacer sans refaire la mise en page : avec 400
+     cartes, tout le reste rame. Et le décalage en cascade s'arrête à la douzième carte,
+     sinon la dernière d'une liste de 359 attendrait une demi-minute son tour. */
+  @keyframes entre{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+  @keyframes part{to{opacity:0;transform:translateX(26px)}}
+  @keyframes glisse{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+  @keyframes battement{from{box-shadow:0 0 0 3px var(--chip)}to{box-shadow:0 0 0 0 rgba(0,0,0,0)}}
+  @keyframes deplie{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+
+  .offre.entre{animation:entre .22s ease-out both}
+  .offre.part,.cand.part{animation:part .19s ease-in forwards;pointer-events:none}
+  /* le liseré de gauche dit le statut : quand il change, il se signale */
+  .offre.change{animation:battement .45s ease-out}
+  .ent.entre{animation:entre .2s ease-out both}
+  .dedans.ouvre{animation:deplie .2s ease-out both}
+  .msg{animation:glisse .2s ease-out both}
+
+  .abtn,.fbtn,.onglet,.modes button,.etat.a,.cachees,.lien{transition:background .14s,
+        color .14s,border-color .14s,transform .09s}
+  .abtn:active,.fbtn:active,.onglet:active,.modes button:active,
+  .etat.a:active,.cachees:active,.lien:active{transform:scale(.965)}
+  .offre{transition:border-color .14s,background .14s,box-shadow .14s}
+  .offre:hover{box-shadow:0 3px 14px rgba(20,35,44,.07)}
+  .ent{transition:border-color .14s,box-shadow .14s}
+  .ent:hover{box-shadow:0 3px 14px rgba(20,35,44,.06)}
+  .logo{transition:transform .16s}
+  .offre:hover .logo,.ent:hover .logo{transform:scale(1.07)}
+
+  /* Le réglage système gagne toujours : ici on ne fait pas joli contre l'avis de qui lit. */
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;
+                         transition-duration:.01ms !important}
+  }
+
+  .empty{font-family:var(--mono);font-size:13px;color:var(--muted);padding:40px 0}
+  #toast{position:fixed;right:20px;bottom:20px;display:flex;flex-direction:column;gap:8px;
+         align-items:flex-end;z-index:50}
+  .msg{font-family:var(--mono);font-size:12px;padding:11px 15px;border-radius:3px;
+       background:var(--ink);color:var(--paper);box-shadow:0 8px 26px rgba(0,0,0,.22);max-width:380px}
+  .msg.ko{background:var(--ko)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Chasse à l'emploi</h1>
+    <span class="count" id="count"></span>
+    <input class="search" id="search" placeholder="chercher…  ( / )" autocomplete="off">
+  </header>
+
+  <div class="onglets">
+    <button class="onglet on" id="tab-offres">Offres<i id="n-offres"></i></button>
+    <button class="onglet" id="tab-suivi">Suivi<i id="n-suivi"></i></button>
+    <button class="onglet" id="tab-ent">Entreprises<i id="n-ent"></i></button>
+    <div class="modes" id="modes">
+      <button data-m="liste">Liste</button>
+      <button data-m="grille">Grille</button>
+      <button data-m="compact">Compact</button>
+    </div>
+  </div>
+
+  <div id="vue-offres">
+    <div class="flabel">Statut</div>
+    <div class="frow" id="f-statut"></div>
+    <div class="flabel">Contrat</div>
+    <div class="frow" id="f-contrat"></div>
+    <div class="flabel">Pays</div>
+    <div class="frow" id="f-pays"></div>
+    <div class="flabel">Ville</div>
+    <div class="frow" id="f-ville"></div>
+    <div class="offres" id="offres"></div>
+    <div class="empty" id="vide-offres" hidden>Rien ne correspond.</div>
+  </div>
+
+  <div id="vue-suivi" hidden>
+    <div class="bilan" id="bilan"></div>
+    <div class="flabel">Où ça en est</div>
+    <div class="frow" id="f-suivi"></div>
+    <div class="suivi" id="suivi"></div>
+    <div class="empty" id="vide-suivi" hidden>Aucune candidature ici.</div>
+  </div>
+
+  <div id="vue-ent" hidden>
+    <div class="flabel">Tags</div>
+    <div class="frow" id="f-tags"></div>
+    <div class="cats" id="cats"></div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script src="data.js"></script>
+<script src="logos.js"></script>
+<script>
+/* « à postuler » : vue, retenue, pas encore envoyée. C'est la pile de travail. */
+const LIB = {"a-voir":"À voir","a-postuler":"À postuler","postule":"Postulé",
+             "entretien":"Entretien","refus":"Refus","jete":"Jeté","mort":"Mort"};
+let fStatut="*", fContrat="*", fPays="*", fVille="*", fSuivi="*", fTag="*", q="", vue="offres";
+/* Jetée ou morte, une offre ne doit plus occuper de place : elle sort de la liste au lieu
+   d'y rester en gris. On la retrouve par le filtre « caché », ou entreprise par entreprise. */
+/* Trois densités d'affichage. Le choix se garde d'une session à l'autre. */
+const MODES = ["liste", "grille", "compact"];
+let mode = MODES.includes(localStorage.getItem("mode")) ? localStorage.getItem("mode") : "liste";
+
+function poseMode(m){
+  mode = m; localStorage.setItem("mode", m);
+  document.getElementById("offres").className = "offres " + (m === "liste" ? "" : m);
+  for(const b of document.querySelectorAll(".modes button"))
+    b.classList.toggle("on", b.dataset.m === m);
+}
+
+const CACHES = new Set(["jete", "mort"]);
+const estCache = o => CACHES.has(o.statut || "");
+/* Trois piles, et une offre n'est jamais dans deux à la fois :
+   — le TRI, ce qui attend une décision ;
+   — le REBUT, ce qu'il a écarté avant de postuler (filtre « caché ») ;
+   — le SUIVI, ce à quoi il a postulé, qui n'attend plus sa décision mais leur réponse.
+   C'est `postule_le` qui range dans le suivi, pas le statut courant : un entretien, un
+   refus, une offre morte après envoi restent du suivi. Les fiches Entreprises, elles,
+   montrent tout — c'est leur rôle. */
+const estSuivie = o => !!o.postule_le;
+const dansLeTri = o => !estCache(o) && !estSuivie(o);
+const JOUR = 86400000;
+const joursDepuis = d => Math.floor((Date.now() - new Date(d + "T12:00:00").getTime()) / JOUR);
+/* la date d'ajout la plus récente sert à repérer les nouvelles d'une passe à l'autre */
+const DELAI_RELANCE = 10;
+function aRelancer(o){
+  /* On relance ce qui n'a jamais bougé. Un entretien ou un refus n'est pas en attente,
+     et le compte part de l'envoi — `maj` bougeait au moindre reclassement. */
+  if((o.statut||"a-voir")!=="postule" || !o.postule_le) return false;
+  return joursDepuis(o.postule_le) >= DELAI_RELANCE;
+}
+const DERNIERE = DATA.offres
+  .map(o=>o.ajoute).filter(Boolean).sort().pop();
+
+const esc = s => String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm = s => (s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+const toast = document.getElementById("toast");
+function dire(t,k){ const d=document.createElement("div"); d.className="msg"+(k?" "+k:"");
+  d.textContent=t; toast.appendChild(d);
+  setTimeout(()=>{d.style.transition="opacity .3s";d.style.opacity=0;setTimeout(()=>d.remove(),300);},k?6000:3200); }
+
+/* ---------- offres ---------- */
+function matchOffre(o){
+  /* Les filtres commençant par « _ » ne sont pas des statuts : ils doivent être traités
+     AVANT la comparaison générique, sinon celle-ci rejette tout — c'est ce qui rendait
+     l'onglet « caché » vide. */
+  if(estSuivie(o)) return false;                      // le suivi a son onglet
+  if(fStatut==="_cache") return estCache(o);          // le seul endroit qui montre le rebut
+  if(estCache(o)) return false;                       // partout ailleurs, elles n'existent pas
+  if(fStatut==="_neuf" && o.ajoute!==DERNIERE) return false;
+  if(fStatut!=="*" && fStatut[0]!=="_" && (o.statut||"a-voir")!==fStatut) return false;
+  /* « _rien » et non "" : la chaîne vide servirait aussi de valeur « tout ». */
+  if(fContrat!=="*" && (o.contrat || "_rien")!==fContrat) return false;
+  if(fPays!=="*" && (o.pays||"?")!==fPays) return false;
+  if(fVille!=="*" && (o.ville||"—")!==fVille) return false;
+  return matchTexte(o);
+}
+
+/* La barre de recherche sert les trois onglets : une seule fonction. */
+function matchTexte(o){
+  if(!q) return true;
+  const h=norm([o.entreprise,o.poste,o.lieu,o.pays,o.ville,o.region,o.note].join(" "));
+  return norm(q).split(/\s+/).every(w=>h.includes(w));
+}
+
+function filtres(){
+  const st=document.getElementById("f-statut");
+  const mk=(lab,val,n,get,set)=>{ const b=document.createElement("button");
+    b.className="fbtn"+(get()===val?" on":""); b.innerHTML=`${esc(lab)}<i>${n}</i>`;
+    b.onclick=()=>{set(val);oublieLEcran();filtres();rendOffres();}; return b; };
+  const cS=v=>DATA.offres.filter(o=>dansLeTri(o)&&(o.statut||"a-voir")===v).length;
+  const nC=DATA.offres.filter(o=>estCache(o)&&!estSuivie(o)).length;
+  const nN=DATA.offres.filter(o=>dansLeTri(o)&&o.ajoute===DERNIERE).length;
+  const visibles=DATA.offres.filter(dansLeTri);
+  st.replaceChildren(mk("tout","*",visibles.length,()=>fStatut,v=>fStatut=v),
+    ...(nN?[mk("★ nouvelles","_neuf",nN,()=>fStatut,v=>fStatut=v)]:[]),
+    ...["a-voir","a-postuler"]
+      .map(k=>mk(LIB[k],k,cS(k),()=>fStatut,v=>fStatut=v)),
+    ...(nC?[mk("caché","_cache",nC,()=>fStatut,v=>fStatut=v)]:[]));
+
+  /* Le contrat se lit dans l'intitulé, qui souvent n'en dit rien : la plupart des offres
+     tombent dans « non précisé ». On n'affiche que les cases qui comptent quelque chose. */
+  const co=document.getElementById("f-contrat");
+  const cptC=v=>visibles.filter(o=>(o.contrat||"_rien")===v).length;
+  co.replaceChildren(mk("tout","*",visibles.length,()=>fContrat,v=>fContrat=v),
+    ...[["VIE","VIE"],["CDI","CDI"],["CDD","CDD"],["non précisé","_rien"]]
+      .filter(([,v])=>cptC(v))
+      .map(([lab,v])=>mk(lab,v,cptC(v),()=>fContrat,v2=>fContrat=v2)));
+
+  const pa=document.getElementById("f-pays");
+  const cptP=v=>visibles.filter(o=>(o.pays||"?")===v).length;
+  const pays=[...new Set(visibles.map(o=>o.pays||"?"))]
+    .sort((a,b)=>cptP(b)-cptP(a));
+  pa.replaceChildren(mk("tout","*",visibles.length,()=>fPays,v=>fPays=v),
+    ...pays.map(v=>mk(v,v,cptP(v),()=>fPays,v2=>fPays=v2)));
+
+  const vi=document.getElementById("f-ville");
+  const cptV=v=>visibles.filter(o=>(o.ville||"—")===v).length;
+  const villes=[...new Set(visibles.map(o=>o.ville||"—"))]
+    .sort((a,b)=>cptV(b)-cptV(a)).slice(0,12);
+  vi.replaceChildren(mk("toutes","*",visibles.length,()=>fVille,v=>fVille=v),
+    ...villes.map(v=>mk(v,v,cptV(v),()=>fVille,v2=>fVille=v2)));
+}
+
+/* ---------- vignettes ----------
+   logos.js peut manquer (jamais généré, ou toutes les icônes écartées) : la page doit
+   marcher pareil. Sans icône, un monogramme — ce n'est pas un pis-aller, c'est le cas
+   normal pour les entreprises hébergées chez un ATS. */
+const ICONES = (typeof LOGOS === "object" && LOGOS) || {};
+function teinte(k){ let h = 0; for(const c of k) h = (h * 31 + c.charCodeAt(0)) % 360; return h; }
+function initiales(nom){
+  const mots = nom.replace(/[^\p{L}\p{N} ]/gu, " ").split(/\s+/).filter(Boolean);
+  return (mots.length > 1 ? mots[0][0] + mots[1][0] : (mots[0] || "?").slice(0, 2)).toUpperCase();
+}
+function monogramme(nom){
+  return `<span class="logo mono" style="--h:${teinte(cle(nom))}">${esc(initiales(nom))}</span>`;
+}
+function vignette(nom){
+  const src = ICONES[cle(nom)];
+  return src ? `<img class="logo" src="${src}" alt="" loading="lazy" data-nom="${esc(nom)}">`
+             : monogramme(nom);
+}
+/* Une icône qui ne se décode pas laisserait un carré vide. L'événement `error` d'une image
+   ne remonte pas : il faut l'écouter à la capture, une fois, pour toute la page. */
+document.addEventListener("error", ev => {
+  const im = ev.target;
+  if(im.tagName === "IMG" && im.classList.contains("logo"))
+    im.outerHTML = monogramme(im.dataset.nom || "?");
+}, true);
+
+/* Ce qu'on peut décider AVANT d'avoir postulé. « Entretien » et « Refus » n'ont rien à
+   faire ici : ils ne veulent dire quelque chose qu'une fois la candidature envoyée, et
+   c'est l'onglet Suivi qui les porte. */
+const TRI = ["a-voir", "a-postuler", "postule", "jete", "mort"];
+
+/* Le geste qu'on fait à la main au moment de postuler : copier l'essentiel de
+   l'offre pour le coller dans son chat, qui écrit le CV et la lettre. La page ne sait
+   pas rédiger — elle ne s'y essaie pas — mais elle peut au moins tendre le presse-papier
+   déjà rempli. Le texte de l'annonce n'est pas stocké ici (décision du 2026-09-06), d'où
+   le lien : c'est lui qui porte le détail. */
+async function copierPourLeChat(o){
+  const bloc = [`${o.entreprise} - ${o.poste}`,
+                `Lieu : ${[o.ville, o.region, o.pays].filter(Boolean).join(", ") || o.lieu}`,
+                `Offre : ${o.url}`, "", o.note || ""].join("\n").trim();
+  /* Deux voies. L'API moderne exige un geste récent de l'utilisateur et refuse tout le
+     reste ; la vieille `execCommand` marche là où elle échoue. On tente la propre, on
+     retombe sur l'ancienne, et on ne prétend avoir copié que si ça a vraiment marché. */
+  const parLAncienne = () => {
+    const z = document.createElement("textarea");
+    z.value = bloc; z.style.cssText = "position:fixed;top:-9999px";
+    document.body.appendChild(z); z.select();
+    const ok = document.execCommand("copy");
+    z.remove();
+    return ok;
+  };
+  let ok = false;
+  try{ await navigator.clipboard.writeText(bloc); ok = true; }
+  catch(e){ try{ ok = parLAncienne(); }catch(e2){ ok = false; } }
+  ok ? dire(`${o.entreprise} copié - colle-le dans le chat`)
+     : dire("Copie refusée par le navigateur.", "ko");
+}
+
+function carte(o){
+  const s=o.statut||"a-voir";
+  const d=document.createElement("div");
+  d.className="offre"; d.dataset.s=s; d.dataset.id=o.id;
+  d.innerHTML=`
+    <div class="otop">
+      ${vignette(o.entreprise)}
+      <span class="oentreprise">${esc(o.entreprise)}</span>
+      ${aRelancer(o)?`<span class="relance">à relancer</span>`:""}
+      ${o.ajoute===DERNIERE&&!aRelancer(o)?`<span class="neuf">nouveau</span>`:""}
+      <span class="oposte">${esc(o.poste)}</span>
+    </div>
+    <div class="ometa">
+      <span class="tag">${esc(o.ville||o.lieu)}</span>
+      ${o.region?`<span class="tag">${esc(o.region)}</span>`:""}
+      <span class="tag">${esc(o.pays||"?")}</span>
+      ${o.teletravail==="oui"?`<span class="tag">télétravail</span>`:""}
+    </div>
+    <div class="onote">${esc(o.note)}</div>
+    <div class="oactions">
+      ${TRI.map(k=>`<button class="abtn${k===s?" on":""}${k==="postule"?" fort":""}" data-v="${k}">${LIB[k]}</button>`).join("")}
+      ${o.maj?`<span class="maj">maj ${esc(o.maj)}</span>`:""}
+      <button class="abtn copier">Copier</button>
+      <a class="lien" href="${esc(o.url)}" target="_blank" rel="noopener">Ouvrir l'offre ↗</a>
+    </div>`;
+  d.querySelectorAll(".abtn[data-v]").forEach(b=>b.onclick=()=>majStatut(o,b.dataset.v));
+  d.querySelector(".copier").onclick=()=>copierPourLeChat(o);
+  return d;
+}
+
+/* Une carte n'entre en scène qu'une fois. Sans ça, changer un statut rejouerait
+   l'animation des 359 autres à chaque clic : le tri devient illisible. On garde donc
+   la liste de ce qui est déjà à l'écran, et seules les cartes nouvelles bougent. */
+let dejaVues = new Set(), dejaVuesEnt = new Set();
+const CASCADE_MAX = 12;          // au-delà, tout le monde entre en même temps
+const oublieLEcran = () => { dejaVues = new Set(); dejaVuesEnt = new Set(); };
+/* Déplier une entreprise redessine tout l'onglet. Le glissement doit accompagner CE
+   geste-là, pas les redessins qui suivent chaque changement de statut à l'intérieur. */
+let animerDeplie = true;
+
+/* Les trois badges d'onglets et l'en-tête disent la même chose : ils se calculent au même
+   endroit, sinon celui du Suivi reste à zéro tant qu'on n'a pas ouvert l'onglet. */
+function compteurs(montres){
+  const tri = DATA.offres.filter(dansLeTri).length;
+  const cand = DATA.offres.filter(estSuivie).length;
+  const aTrier = DATA.offres.filter(o=>dansLeTri(o)&&(o.statut||"a-voir")==="a-voir").length;
+  document.getElementById("n-offres").textContent = tri;
+  document.getElementById("n-suivi").textContent  = cand;
+  document.getElementById("n-ent").textContent    = DATA.entreprises.length;
+  /* L'en-tête appartient à la page, pas à un onglet : il se réécrit depuis n'importe
+     lequel, sinon il ment dès qu'on change un statut depuis le Suivi. */
+  document.getElementById("count").textContent =
+    (montres === undefined ? "" : `${montres} / `) +
+    `${tri} offres · ${aTrier} à trier · ${cand} candidature${cand>1?"s":""}`;
+}
+
+function rendOffres(){
+  const quand = o => o.change_a || o.maj || "";
+  const list=DATA.offres.filter(matchOffre).sort(fStatut==="_cache"
+    ? (a,b)=>quand(b).localeCompare(quand(a))       // la dernière cachée en premier
+    : (a,b)=>
+    (aRelancer(b)?1:0)-(aRelancer(a)?1:0) ||
+    (b.ajoute||"").localeCompare(a.ajoute||"") ||
+    (a.priorite??99)-(b.priorite??99) ||
+    (b.note||"").localeCompare(a.note||""));
+  const box=document.getElementById("offres");
+  let rang = 0;
+  box.replaceChildren(...list.map(o=>{
+    const d = carte(o);
+    if(!dejaVues.has(o.id)){
+      d.classList.add("entre");
+      d.style.animationDelay = Math.min(rang++, CASCADE_MAX) * 22 + "ms";
+    }
+    return d;
+  }));
+  dejaVues = new Set(list.map(o=>o.id));
+  document.getElementById("vide-offres").hidden = list.length>0;
+  compteurs(list.length);
+}
+
+const redessine = () => ({offres:rendOffres, suivi:rendSuivi, ent:rendEnt})[vue]();
+
+const noeudDe = id => document.querySelector(`.offre[data-id="${CSS.escape(id)}"]`);
+const DUREE_SORTIE = 190;                    // doit rester sous l'animation `part` du CSS
+/* Un redessin qui n'est pas un geste de l'utilisateur ne doit rien animer : ni cascade, ni
+   dépliage. C'est le cas de la confirmation du serveur, et des deux retours en arrière. */
+function redessineSansGeste(){
+  animerDeplie = false; filtres(); redessine(); animerDeplie = true;
+}
+
+/* Les statuts qui veulent dire « j'ai postulé ». Doit rester identique à `A_POSTULE`
+   dans serveur.py : c'est lui qui grave la date, on ne fait que l'anticiper à l'écran. */
+const A_POSTULE = new Set(["postule", "entretien", "refus"]);
+const aujourdhui = () => new Date().toLocaleDateString("sv");   // sv = AAAA-MM-JJ
+
+async function majStatut(o,statut){
+  const avant=o.statut, avantPostuleLe=o.postule_le;
+  /* Une carte qui quitte la vue ne doit pas s'évaporer : sans transition, la suivante
+     saute à sa place et on ne sait plus laquelle on vient de trier. Deux façons de
+     quitter la pile de tri — la jeter, ou y postuler. */
+  const noeud = noeudDe(o.id) || document.querySelector(`.cand[data-id="${CSS.escape(o.id)}"]`);
+  const sort = vue==="offres" && dansLeTri(o) && (CACHES.has(statut) || A_POSTULE.has(statut));
+  if(sort && noeud) noeud.classList.add("part");
+  o.statut=statut;
+  if(A_POSTULE.has(statut) && !o.postule_le) o.postule_le = aujourdhui();
+  if(sort && noeud) await new Promise(r=>setTimeout(r, DUREE_SORTIE));
+  redessineSansGeste();
+  if(!sort) noeudDe(o.id)?.classList.add("change");
+  try{
+    const r=await fetch("/statut",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({id:o.id,statut})});
+    const j=await r.json();
+    if(!r.ok){ o.statut=avant; o.postule_le=avantPostuleLe; redessineSansGeste();
+               return dire("Refusé : "+(j.erreur||r.status),"ko"); }
+    o.maj=j.maj; o.postule_le=j.postule_le;      // le disque fait foi sur la date
+    animerDeplie=false; redessine(); animerDeplie=true;
+    dire(`${o.entreprise} → ${LIB[statut]}` + (sort && A_POSTULE.has(statut) ? " · dans le Suivi" : ""));
+  }catch(e){
+    o.statut=avant; o.postule_le=avantPostuleLe; redessineSansGeste();
+    dire("Serveur injoignable. Ouvre avec ouvrir.command, pas par double-clic sur index.html.","ko");
+  }
+}
+
+/* ---------- suivi ----------
+   Ce qu'on veut savoir ici tient en une question : « qu'est-ce qui traîne ? ».
+   D'où le tri — ce qui attend depuis le plus longtemps remonte, et ce qui est clos
+   (refus, abandon) tombe en bas sans disparaître. */
+const CLOS = new Set(["refus", "mort"]);
+const SUITES = ["entretien", "refus", "mort"];      // ce qu'on peut déclarer depuis le suivi
+
+function etatSuivi(o){
+  const s = o.statut || "postule";
+  if(CLOS.has(s)) return s;
+  return aRelancer(o) ? "_relance" : s;
+}
+
+function rendSuivi(){
+  const toutes = DATA.offres.filter(estSuivie);
+  const compte = e => toutes.filter(o=>etatSuivi(o)===e).length;
+  const parStatut = s => toutes.filter(o=>(o.statut||"postule")===s).length;
+  const enAttente = toutes.filter(o=>!CLOS.has(o.statut||"postule")).length;
+
+  const bilan = document.getElementById("bilan");
+  bilan.replaceChildren(...[
+    [toutes.length, toutes.length>1?"candidatures":"candidature"],
+    [enAttente, "en attente"],
+    [compte("_relance"), "à relancer"],
+    [toutes.filter(o=>o.rdv && DANS(o.rdv) >= 0).length, "à venir"],
+    [parStatut("entretien"), "entretien" + (parStatut("entretien")>1?"s":"")],
+    [parStatut("refus"), "refus"],
+  ].map(([n,lab])=>{ const d=document.createElement("div");
+    d.innerHTML = `<b>${n}</b><span>${esc(lab)}</span>`; return d; }));
+
+  const fr = document.getElementById("f-suivi");
+  const mk=(lab,val,n)=>{ const b=document.createElement("button");
+    b.className="fbtn"+(fSuivi===val?" on":""); b.innerHTML=`${esc(lab)}<i>${n}</i>`;
+    b.onclick=()=>{fSuivi=val;oublieLEcran();rendSuivi();}; return b; };
+  fr.replaceChildren(mk("tout","*",toutes.length),
+    ...[["à relancer","_relance"],["postulé","postule"],["entretien","entretien"],
+        ["refus","refus"],["sans suite","mort"]]
+      .filter(([,v])=>compte(v)).map(([lab,v])=>mk(lab,v,compte(v))));
+
+  const list = toutes
+    .filter(o => (fSuivi==="*" || etatSuivi(o)===fSuivi) && matchTexte(o))
+    .sort((a,b)=>{
+      const vers = o => o.rdv && DANS(o.rdv) >= 0 ? DANS(o.rdv) : null;
+      const va = vers(a), vb = vers(b);
+      if(va !== null || vb !== null)                                 // un rendez-vous passe devant tout
+        return va === null ? 1 : vb === null ? -1 : va - vb;         // et le plus proche d'abord
+      return (CLOS.has(a.statut||"")?1:0)-(CLOS.has(b.statut||"")?1:0) ||   // le clos en bas
+             (aRelancer(b)?1:0)-(aRelancer(a)?1:0) ||                       // ce qui traîne en haut
+             (b.postule_le||"").localeCompare(a.postule_le||"");
+    });
+
+  const box = document.getElementById("suivi");
+  let rang = 0;
+  box.replaceChildren(...list.map(o=>{
+    const d = carteSuivi(o);
+    if(!dejaVues.has(o.id)){
+      d.classList.add("entre");
+      d.style.animationDelay = Math.min(rang++, CASCADE_MAX) * 22 + "ms";
+    }
+    return d;
+  }));
+  dejaVues = new Set(list.map(o=>o.id));
+  document.getElementById("vide-suivi").hidden = list.length > 0;
+  compteurs();
+}
+
+/* Ce qu'on apprend au téléphone ne tient pas dans un statut. Chaque candidature porte
+   donc ses notes et sa prochaine échéance, écrites depuis la page, enregistrées par le
+   serveur — c'est le seul endroit où l'on saura, dans trois semaines, ce qui a été dit. */
+let notesOuvertes = new Set();
+
+const DANS = d => Math.ceil((new Date(d).getTime() - Date.now()) / JOUR);
+function quandDit(d){
+  const j = DANS(d);
+  if(j < 0) return "passé";
+  if(j === 0) return "aujourd'hui";
+  if(j === 1) return "demain";
+  return `dans ${j} jours`;
+}
+const JOURS = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+function dateLisible(d){
+  const x = new Date(d);
+  return `${JOURS[x.getDay()]} ${x.getDate()}/${String(x.getMonth()+1).padStart(2,"0")}`
+       + ` à ${String(x.getHours()).padStart(2,"0")}h${x.getMinutes()?String(x.getMinutes()).padStart(2,"0"):""}`;
+}
+
+async function enregistreFiche(o, champs){
+  Object.assign(o, champs);
+  try{
+    const r = await fetch("/fiche", {method:"POST", headers:{"Content-Type":"application/json"},
+                                     body: JSON.stringify({id:o.id, ...champs})});
+    if(!r.ok) throw new Error((await r.json()).erreur || r.status);
+    dire("Fiche enregistrée");
+    return true;
+  }catch(e){
+    dire("Pas enregistré : " + e.message, "ko");
+    return false;
+  }
+}
+
+function panneauNotes(o){
+  const d = document.createElement("div");
+  d.className = "cnotes";
+  d.innerHTML = `
+    <div class="ligne">
+      <span class="aide">Prochaine étape</span>
+      <input type="datetime-local" class="quand" value="${esc(o.rdv || "")}">
+      <input type="text" class="quoi" placeholder="entretien avec…" value="${esc(o.rdv_quoi || "")}">
+    </div>
+    <span class="aide">Notes</span>
+    <textarea class="txt" placeholder="Ce qui s'est dit, qui, quand, quoi préparer…">${esc(o.notes || "")}</textarea>`;
+  const quand = d.querySelector(".quand"), quoi = d.querySelector(".quoi"), txt = d.querySelector(".txt");
+  /* On enregistre quand le champ perd le focus, pas à chaque frappe : une note se tape
+     d'un trait, et cent requêtes pour un paragraphe n'aideraient personne. */
+  const pousse = async () => {
+    if((o.notes||"")===txt.value && (o.rdv||"")===quand.value && (o.rdv_quoi||"")===quoi.value) return;
+    if(await enregistreFiche(o, {notes:txt.value, rdv:quand.value, rdv_quoi:quoi.value})){
+      animerDeplie = false; rendSuivi(); animerDeplie = true;
+    }
+  };
+  [quand, quoi, txt].forEach(e => e.addEventListener("blur", pousse));
+  return d;
+}
+
+function carteSuivi(o){
+  const s = o.statut || "postule";
+  const aVenir = o.rdv && DANS(o.rdv) >= 0;
+  const j = aVenir ? DANS(o.rdv) : (o.postule_le ? joursDepuis(o.postule_le) : 0);
+  const d = document.createElement("div");
+  d.className = "cand" + (aVenir ? " rdv" : aRelancer(o) ? " tarde" : "");
+  d.dataset.s = s; d.dataset.id = o.id;
+  d.innerHTML = `
+    <div class="cjours${aVenir ? " vers" : ""}"
+         title="${aVenir ? "Prochaine étape " + esc(quandDit(o.rdv)) : "Postulé le " + esc(o.postule_le||"?")}">
+      <b>${j}</b><span>${aVenir ? (j>1?"jours":"jour") : (j>1?"jours":"jour")}</span></div>
+    <div class="cinfo">
+      <div class="ctitre">
+        ${vignette(o.entreprise)}
+        <span class="enom">${esc(o.entreprise)}</span>
+        <span class="tag">${esc(o.ville || o.lieu || "?")}</span>
+        ${aVenir ? `<span class="prochain">${esc(o.rdv_quoi || "prochaine étape")} · ${esc(dateLisible(o.rdv))}</span>` : ""}
+        ${!aVenir && aRelancer(o) ? `<span class="relance">à relancer</span>` : ""}
+      </div>
+      <div class="cposte">${esc(o.poste)}</div>
+    </div>
+    <div class="cetat">
+      ${SUITES.map(k=>`<button class="abtn${k===s?" on":""}" data-v="${k}">${LIB[k]}</button>`).join("")}
+      ${s!=="postule" ? `<button class="abtn" data-v="postule">Toujours rien</button>` : ""}
+      <button class="abtn notes">Notes${o.notes ? " •" : ""}</button>
+      <a class="lien" href="${esc(o.url)}" target="_blank" rel="noopener">Ouvrir ↗</a>
+    </div>`;
+  d.querySelectorAll(".abtn[data-v]").forEach(b=>b.onclick=()=>majStatut(o, b.dataset.v));
+  d.querySelector(".notes").onclick = () => {
+    notesOuvertes.has(o.id) ? notesOuvertes.delete(o.id) : notesOuvertes.add(o.id);
+    animerDeplie = false; rendSuivi(); animerDeplie = true;
+  };
+  if(notesOuvertes.has(o.id)) d.appendChild(panneauNotes(o));
+  return d;
+}
+
+/* ---------- entreprises ---------- */
+/* Les noms ne s'écrivent pas pareil des deux côtés : « Roche (CH) » dans les offres,
+   « Roche » dans l'annuaire. On compare sur une clé dépouillée. */
+const cle = s => norm(s).replace(/\(ch\)|\(fr\)/g, "").replace(/[^a-z0-9]/g, "");
+const BRANCHEES = new Set((DATA.branchees||[]).map(cle));
+const ECARTEES  = new Set((DATA.ecartees ||[]).map(cle));
+/* Une entreprise « non branchée » est du travail qui reste. Un agrégateur ou un site sans
+   API n'en est pas : les compter ensemble ferait mentir le compteur. Chacun son état. */
+const raisons = o => new Map(Object.entries(o||{}).map(([n,r])=>[cle(n),r]));
+const AGREGATEURS = raisons(DATA.agregateurs);
+const SANS_API    = raisons(DATA.sans_api);
+let ouverte = null;
+
+function offresDe(nom, avecCachees){
+  const k = cle(nom);
+  return DATA.offres.filter(o => cle(o.entreprise) === k && (avecCachees || !estCache(o)));
+}
+const cacheesDe = nom => offresDe(nom, true).filter(estCache);
+let cacheesOuvertes = false;
+
+function rendEnt(){
+  /* Une entreprise porte plusieurs tags : on ne peut plus la ranger dans une seule
+     section. Une grille à plat, et des tags qui filtrent — c'est plus juste et plus court. */
+  const tousTags = [...new Set(DATA.entreprises.flatMap(e => e.tags || []))]
+    .sort((a,b)=>cptT(b)-cptT(a) || a.localeCompare(b));
+  function cptT(v){ return DATA.entreprises.filter(e=>(e.tags||[]).includes(v)).length; }
+  const ft=document.getElementById("f-tags");
+  const mkT=(lab,val,n)=>{ const b=document.createElement("button");
+    b.className="fbtn"+(fTag===val?" on":""); b.innerHTML=`${esc(lab)}<i>${n}</i>`;
+    b.onclick=()=>{fTag=val;oublieLEcran();rendEnt();}; return b; };
+  ft.replaceChildren(mkT("toutes","*",DATA.entreprises.length),
+    ...tousTags.map(v=>mkT(v,v,cptT(v))));
+
+  const list=DATA.entreprises.filter(e=>{
+    if(fTag!=="*" && !(e.tags||[]).includes(fTag)) return false;
+    if(!q) return true;
+    const h=norm([e.nom,(e.tags||[]).join(" "),e.note].join(" "));
+    return norm(q).split(/\s+/).every(w=>h.includes(w));
+  });
+  const box=document.getElementById("cats");
+  box.replaceChildren(...[list].map(dans=>{
+    const sec=document.createElement("section"); sec.className="cat";
+    sec.innerHTML=`<h2>${fTag==="*"?"Toutes":esc(fTag)} <span class="count">${dans.length}</span></h2>
+      <div class="grid">${dans.map((e,i)=>{
+        const n = offresDe(e.nom).length, nc = cacheesDe(e.nom).length, k = cle(e.nom);
+        const neuve = dejaVuesEnt.has(e.nom) ? ""
+          : ` entre" style="animation-delay:${Math.min(i,CASCADE_MAX)*22}ms`;
+        const etat = ECARTEES.has(k) ? `<span class="etat">écartée — ESN</span>`
+          : n ? `<button class="etat a" data-ent="${esc(e.nom)}">${n} offre${n>1?"s":""} ▾</button>`
+          : BRANCHEES.has(k) ? `<span class="etat">branchée · rien pour toi</span>`
+          : AGREGATEURS.has(k) ? `<span class="etat" title="${esc(AGREGATEURS.get(k))}">agrégateur</span>`
+          : SANS_API.has(k) ? `<span class="etat" title="${esc(SANS_API.get(k))}">sans API</span>`
+          : `<span class="etat">non branchée</span>`;
+        const cache = nc ? `<button class="cachees" data-ent="${esc(e.nom)}">${nc} cachée${nc>1?"s":""}</button>` : "";
+        return `
+        <div class="ent${neuve}" data-nom="${esc(e.nom)}">
+          <div class="etete">${vignette(e.nom)}<span class="enom">${esc(e.nom)}</span></div>
+          <div class="etags">${(e.tags||[]).map(x=>`<span class="tag">${esc(x)}</span>`).join("")}</div>
+          ${e.note ? `<div class="enote">${esc(e.note)}</div>` : ""}
+          <div class="eliens">
+            <a href="${esc(e.url)}" target="_blank" rel="noopener">Site carrière ↗</a>
+            <a href="https://www.google.com/search?q=${encodeURIComponent(e.nom+" carrières emploi")}"
+               target="_blank" rel="noopener">Chercher ↗</a>
+            ${etat}${cache}
+          </div>
+        </div>`;}).join("")}</div>`;
+    return sec;
+  }));
+  dejaVuesEnt = new Set(list.map(e=>e.nom));
+  compteurs();
+  if(ouverte) deplier(ouverte);
+}
+
+function deplier(nom){
+  const carteEnt = document.querySelector(`.ent[data-nom="${CSS.escape(nom)}"]`);
+  if(!carteEnt) return;
+  ouverte = nom;
+  carteEnt.classList.add("ouverte");
+  const boite = document.createElement("div");
+  boite.className = "dedans" + (animerDeplie ? " ouvre" : "");
+  const liste = offresDe(nom, cacheesOuvertes)
+    .sort((a,b)=>(estCache(a)?1:0)-(estCache(b)?1:0) ||
+                 (b.ajoute||"").localeCompare(a.ajoute||""));
+  boite.replaceChildren(...liste.map(o=>carte(o)));
+  carteEnt.appendChild(boite);
+  const chip = carteEnt.querySelector(".etat.a");
+  if(chip) chip.textContent = `${liste.length} offre${liste.length>1?"s":""} ▴`;
+}
+
+document.addEventListener("click", ev=>{
+  const c = ev.target.closest(".cachees");
+  if(c){                              // déplie l'entreprise en montrant aussi ses cachées
+    const nom = c.dataset.ent;
+    cacheesOuvertes = !(ouverte === nom && cacheesOuvertes);
+    ouverte = cacheesOuvertes ? nom : null;
+    return rendEnt();
+  }
+  const b = ev.target.closest(".etat.a");
+  if(!b) return;
+  const nom = b.dataset.ent;
+  ouverte = (ouverte === nom) ? null : nom;
+  cacheesOuvertes = false;
+  rendEnt();
+});
+
+/* ---------- onglets ---------- */
+function onglet(v){
+  vue=v;
+  for(const [id,k] of [["tab-offres","offres"],["tab-suivi","suivi"],["tab-ent","ent"]])
+    document.getElementById(id).classList.toggle("on",v===k);
+  document.getElementById("vue-offres").hidden = v!=="offres";
+  document.getElementById("vue-suivi").hidden  = v!=="suivi";
+  document.getElementById("vue-ent").hidden    = v!=="ent";
+  document.getElementById("modes").hidden      = v!=="offres";
+  oublieLEcran(); redessine();
+}
+for(const b of document.querySelectorAll(".modes button")) b.onclick=()=>poseMode(b.dataset.m);
+poseMode(mode);
+document.getElementById("tab-offres").onclick=()=>onglet("offres");
+document.getElementById("tab-suivi").onclick=()=>onglet("suivi");
+document.getElementById("tab-ent").onclick=()=>onglet("ent");
+
+document.getElementById("search").addEventListener("input",e=>{
+  q=e.target.value; oublieLEcran(); redessine();
+});
+document.addEventListener("keydown",e=>{
+  if(e.key==="/" && document.activeElement.id!=="search"){
+    e.preventDefault(); document.getElementById("search").focus();
+  }
+});
+
+/* signe de vie : le serveur s'arrête seul quand l'onglet disparaît */
+const vivant=()=>fetch("/vivant").catch(()=>{});
+vivant(); setInterval(vivant,15000);
+addEventListener("focus",vivant);
+
+/* Les trois vues se dessinent au chargement pour que leurs badges soient justes ;
+   l'onglet Offres passe en dernier, sinon les deux autres effacent le « 553 / »
+   de l'en-tête, qu'eux seuls ne savent pas calculer. */
+rendSuivi(); rendEnt(); filtres(); rendOffres();
+</script>
+</body>
+</html>
