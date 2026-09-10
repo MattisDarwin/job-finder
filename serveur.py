@@ -27,14 +27,25 @@ _vu = {"t": None}
 _verrou = threading.Lock()
 
 
+def assure_data():
+    """Crée data.js depuis l'exemple s'il manque.
+
+    À appeler AU DÉMARRAGE, pas au premier clic : la page charge `data.js` par une
+    balise script. S'il n'existe pas, le navigateur reçoit un 404, `DATA` reste indéfini
+    et la page s'affiche entièrement vide — sans le moindre message.
+    """
+    if DATA.exists():
+        return
+    exemple = RACINE / "data.exemple.js"
+    if not exemple.exists():
+        raise SystemExit(f"Ni {DATA.name}, ni {exemple.name}. Dépôt incomplet ?")
+    print(f"Pas de {DATA.name} : on part de {exemple.name}.")
+    DATA.write_text(exemple.read_text())
+
+
 def lire():
     """Extrait le JSON de data.js. Le fichier garde ses commentaires en tête."""
-    if not DATA.exists():                       # même filet que dans sites-carriere.py
-        exemple = RACINE / "data.exemple.js"
-        if not exemple.exists():
-            raise SystemExit(f"Ni {DATA.name}, ni {exemple.name}.")
-        print(f"Pas de {DATA.name} : on part de {exemple.name}.")
-        DATA.write_text(exemple.read_text())
+    assure_data()
     txt = DATA.read_text()
     i = txt.index(PREFIXE) + len(PREFIXE)
     j = txt.rindex("}") + 1
@@ -165,6 +176,7 @@ def veilleur(srv):
 
 
 if __name__ == "__main__":
+    assure_data()
     with Serveur(("127.0.0.1", PORT), Handler) as srv:
         print(f"Chasse ouverte sur http://127.0.0.1:{PORT}/")
         print("Le serveur s'arretera seul a la fermeture de l'onglet.")

@@ -317,6 +317,21 @@
 <script src="data.js"></script>
 <script src="logos.js"></script>
 <script>
+/* Ceinture et bretelles : si data.js n'a pas pu être chargé, la page serait entièrement
+   vide et personne ne saurait pourquoi. On dit ce qui manque, et comment le réparer. */
+if (typeof DATA === "undefined") {
+  document.body.innerHTML =
+    '<div class="wrap"><header><h1>job finder</h1></header>' +
+    '<div class="empty">Le fichier <b>data.js</b> est introuvable.<br><br>' +
+    'Créez-le à partir de l\'exemple, puis rechargez :<br><br>' +
+    '<code>cp data.exemple.js data.js</code><br><br>' +
+    'Et si la page a été ouverte par double-clic sur index.html, fermez-la : ' +
+    'il faut passer par <code>ouvrir.command</code> ou <code>python3 serveur.py</code>, ' +
+    'sinon aucun changement de statut ne sera enregistré.</div></div>';
+  throw new Error("data.js absent");
+}
+</script>
+<script>
 /* « à postuler » : vue, retenue, pas encore envoyée. C'est la pile de travail. */
 const LIB = {"a-voir":"À voir","a-postuler":"À postuler","postule":"Postulé",
              "entretien":"Entretien","refus":"Refus","jete":"Jeté","mort":"Mort"};
